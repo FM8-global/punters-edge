@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PunterEdge Login</title>
+    <title>PunterEdge Admin</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -22,11 +22,11 @@
 
         .container {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 400px;
-            padding: 40px;
+            max-width: 420px;
+            padding: 50px 40px;
         }
 
         .header {
@@ -35,18 +35,22 @@
         }
 
         .header h1 {
-            font-size: 28px;
+            font-size: 32px;
             color: #333;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .header p {
-            color: #666;
-            font-size: 14px;
+            color: #999;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         label {
@@ -54,122 +58,77 @@
             margin-bottom: 8px;
             color: #333;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         input[type="email"] {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
+            padding: 12px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            background: #fafbfc;
         }
 
         input[type="email"]:focus {
             outline: none;
             border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         button {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 13px;
         }
 
         button:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
 
         button:active {
             transform: translateY(0);
         }
 
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .message {
             margin-top: 20px;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 14px;
+            padding: 13px 14px;
+            border-radius: 8px;
+            font-size: 13px;
             display: none;
+            border-left: 4px solid #ddd;
         }
 
         .message.success {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: #f0f9ff;
+            color: #0369a1;
+            border-left-color: #0ea5e9;
             display: block;
         }
 
         .message.error {
-            background: #ffebee;
-            color: #c62828;
-            display: block;
-        }
-
-        .token-box {
-            margin-top: 20px;
-            padding: 12px;
-            background: #f5f5f5;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .token-box.show {
-            display: block;
-        }
-
-        .token-box p {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        .token-value {
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            word-break: break-all;
-            padding: 8px;
-            background: white;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            padding: 8px;
-            margin-bottom: 8px;
-        }
-
-        .copy-btn {
-            width: 100%;
-            padding: 8px;
-            background: #2196F3;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-bottom: 8px;
-        }
-
-        .copy-btn:hover {
-            background: #1976D2;
-        }
-
-        .instructions {
-            margin-top: 20px;
-            padding: 12px;
-            background: #e3f2fd;
-            border-left: 4px solid #2196F3;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #1565c0;
-            display: none;
-        }
-
-        .instructions.show {
+            background: #fef2f2;
+            color: #991b1b;
+            border-left-color: #ef4444;
             display: block;
         }
 
@@ -177,15 +136,16 @@
             display: none;
             text-align: center;
             color: #666;
+            margin-top: 20px;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
+            width: 16px;
+            height: 16px;
+            animation: spin 0.8s linear infinite;
             margin: 0 auto 8px;
         }
 
@@ -194,10 +154,135 @@
             100% { transform: rotate(360deg); }
         }
 
-        .footer {
-            margin-top: 24px;
-            text-align: center;
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .user-info {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .user-info strong {
+            color: #333;
+        }
+
+        .logout-btn {
+            background: #f3f4f6;
+            color: #666;
+            font-weight: 500;
+            padding: 8px 16px;
             font-size: 12px;
+            border-radius: 6px;
+            width: auto;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .logout-btn:hover {
+            background: #e5e7eb;
+            color: #333;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 13px;
+            background: #f3f4f6;
+            color: #333;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn:hover {
+            background: #e5e7eb;
+            border-color: #d1d5db;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #6b3f8f 100%);
+        }
+
+        .access-denied {
+            display: none;
+            text-align: center;
+            color: #991b1b;
+        }
+
+        .access-denied.show {
+            display: block;
+        }
+
+        .access-denied h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .access-denied p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 11px;
             color: #999;
         }
     </style>
@@ -206,56 +291,81 @@
     <div class="container">
         <div class="header">
             <h1>🏇 PunterEdge</h1>
-            <p>AI Horse Racing Betting</p>
+            <p>Admin Dashboard</p>
         </div>
 
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="your@email.com"
-                    required
-                    autocomplete="email"
-                >
+        <!-- Login Form -->
+        <div id="loginSection">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Admin Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="info@fm8.global"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+                <button type="submit" id="loginBtn">Sign In</button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Signing in...</p>
             </div>
-            <button type="submit" id="loginBtn">Sign In</button>
-        </form>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Signing in...</p>
+            <div class="message" id="message"></div>
         </div>
 
-        <div class="message" id="message"></div>
-
-        <div class="token-box" id="tokenBox">
-            <p><strong>Auth Token (save this securely):</strong></p>
-            <div class="token-value" id="tokenValue"></div>
-            <button class="copy-btn" onclick="copyToken()">Copy Token</button>
-            <p style="font-size: 11px; color: #999; margin-top: 8px;">
-                Include in API requests as: <code>Authorization: Bearer [token]</code>
-            </p>
+        <!-- Access Denied -->
+        <div class="access-denied" id="accessDenied">
+            <h2>❌ Access Denied</h2>
+            <p>Only admin users can access this dashboard.</p>
+            <p>Contact info@fm8.global for access.</p>
+            <button class="action-btn" onclick="location.reload()">Try Again</button>
         </div>
 
-        <div class="instructions" id="instructions">
-            <p><strong>How to use:</strong></p>
-            <ol style="margin-left: 16px; margin-top: 8px;">
-                <li>Copy your token</li>
-                <li>Add to API requests: <code>Authorization: Bearer [token]</code></li>
-                <li>Token valid for 30 days</li>
-                <li>Visit /docs for API reference</li>
-            </ol>
+        <!-- Dashboard -->
+        <div class="dashboard" id="dashboard">
+            <div class="dashboard-header">
+                <div class="user-info">
+                    Logged in as <strong id="userEmail"></strong>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="raceCount">—</div>
+                    <div class="stat-label">Races Today</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="betCount">—</div>
+                    <div class="stat-label">Predictions</div>
+                </div>
+            </div>
+
+            <button class="action-btn primary" onclick="viewPredictions()">View Predictions</button>
+            <button class="action-btn" onclick="viewAPI()">API Reference</button>
+            <button class="action-btn" onclick="showToken()">View Token</button>
         </div>
 
         <div class="footer">
-            <p>Approved users only. Contact info@fm8.global for access.</p>
+            <p>PunterEdge Admin • AI Horse Racing Betting</p>
         </div>
     </div>
 
     <script>
+        // Check if already logged in
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('punterEdgeToken');
+            if (token) {
+                verifyToken(token);
+            }
+        });
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -263,58 +373,101 @@
             const loginBtn = document.getElementById('loginBtn');
             const loading = document.getElementById('loading');
             const message = document.getElementById('message');
-            const tokenBox = document.getElementById('tokenBox');
-            const instructions = document.getElementById('instructions');
 
-            // Reset UI
             message.className = 'message';
-            tokenBox.classList.remove('show');
-            instructions.classList.remove('show');
-
-            // Show loading
             loginBtn.disabled = true;
             loading.style.display = 'block';
 
             try {
                 const response = await fetch('/login', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    message.textContent = data.message;
-                    message.classList.add('success');
+                    // Save token to localStorage
+                    localStorage.setItem('punterEdgeToken', data.token);
+                    localStorage.setItem('punterEdgeEmail', email);
 
-                    // Show token
-                    document.getElementById('tokenValue').textContent = data.token;
-                    tokenBox.classList.add('show');
-                    instructions.classList.add('show');
-
-                    // Clear form
-                    document.getElementById('email').value = '';
+                    // Show dashboard
+                    showDashboard(email);
                 } else {
-                    message.textContent = data.message;
-                    message.classList.add('error');
+                    showError(data.message || 'Login failed');
                 }
             } catch (error) {
-                message.textContent = 'Connection error. Is the server running?';
-                message.classList.add('error');
+                showError('Connection error. Is the server running?');
             } finally {
                 loading.style.display = 'none';
                 loginBtn.disabled = false;
             }
         });
 
-        function copyToken() {
-            const token = document.getElementById('tokenValue').textContent;
-            navigator.clipboard.writeText(token).then(() => {
-                alert('Token copied to clipboard!');
+        function verifyToken(token) {
+            const email = localStorage.getItem('punterEdgeEmail');
+            if (email) {
+                // Check if user is admin by attempting to access admin endpoint
+                fetch('/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }).then(r => {
+                    if (r.ok) {
+                        showDashboard(email);
+                    } else {
+                        logout();
+                    }
+                }).catch(() => logout());
+            }
+        }
+
+        function showDashboard(email) {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('accessDenied').classList.remove('show');
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('userEmail').textContent = email;
+
+            // Fetch stats
+            const token = localStorage.getItem('punterEdgeToken');
+            fetch('/races', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json()).then(data => {
+                document.getElementById('raceCount').textContent = (data.races || []).length;
             });
+
+            fetch('/bets', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json()).then(data => {
+                document.getElementById('betCount').textContent = (data.bets || []).length;
+            });
+        }
+
+        function showError(msg) {
+            const message = document.getElementById('message');
+            message.textContent = msg;
+            message.classList.add('error');
+        }
+
+        function logout() {
+            localStorage.removeItem('punterEdgeToken');
+            localStorage.removeItem('punterEdgeEmail');
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('message').className = 'message';
+            document.getElementById('email').value = '';
+        }
+
+        function viewPredictions() {
+            window.location.href = '/bets';
+        }
+
+        function viewAPI() {
+            window.location.href = '/docs';
+        }
+
+        function showToken() {
+            const token = localStorage.getItem('punterEdgeToken');
+            alert(`Token: ${token}\n\nUse in API requests:\nAuthorization: Bearer ${token}`);
         }
     </script>
 </body>
