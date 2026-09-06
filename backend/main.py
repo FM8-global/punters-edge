@@ -13,7 +13,9 @@ from dotenv import load_dotenv
 from auth import (
     validate_session, create_session, logout_session,
     is_user_approved, add_approved_user, remove_approved_user,
-    get_approved_users, is_admin, is_email_valid
+    get_approved_users, is_admin, is_email_valid, make_admin,
+    remove_admin, get_all_users, request_access, get_pending_requests,
+    approve_request, reject_request, verify_admin_password, ADMIN_EMAIL
 )
 from pydantic import BaseModel
 
@@ -42,6 +44,7 @@ app.add_middleware(
 # Models
 class LoginRequest(BaseModel):
     email: str
+    password: Optional[str] = None
 
 class LoginResponse(BaseModel):
     success: bool
@@ -80,13 +83,19 @@ async def health_check():
 
 @app.post("/login", response_model=LoginResponse)
 async def login(request: LoginRequest):
-    """Login with email"""
+    """Login with email (and password for admin)"""
     email = request.email.lower().strip()
 
     if not is_email_valid(email):
         return LoginResponse(success=False, message="Invalid email format")
 
-    if not is_user_approved(email):
+    # Admin requires password
+    if email == ADMIN_EMAIL:
+        if not request.password:
+            return LoginResponse(success=False, message="Password required for admin account")
+        if not verify_admin_password(request.password):
+            return LoginResponse(success=False, message="Invalid admin password")
+    elif not is_user_approved(email):
         return LoginResponse(success=False, message="Email not approved. Contact info@fm8.global")
 
     token = create_session(email)
@@ -107,6 +116,25 @@ async def logout(authorization: Optional[str] = Header(None)):
         except:
             pass
     return {"message": "Logged out"}
+
+
+@app.post("/signup", response_model=LoginResponse)
+async def signup(request: LoginRequest):
+    """Request access to PunterEdge"""
+    email = request.email.lower().strip()
+
+    if not is_email_valid(email):
+        return LoginResponse(success=False, message="Invalid email format")
+
+    if request_access(email):
+        return LoginResponse(
+            success=True,
+            message=f"Access request submitted for {email}. An admin will review your request shortly."
+        )
+    return LoginResponse(
+        success=False,
+        message="Email is already approved or pending. Try logging in or contact info@fm8.global"
+    )
 
 
 @app.get("/me")
@@ -149,9 +177,92 @@ async def remove_user(request: UserManagement, authorization: Optional[str] = He
         raise HTTPException(status_code=403, detail="Admin access required")
 
     remove_email = request.email.lower().strip()
-    if remove_user(remove_email):
+    if remove_approved_user(remove_email):
         return {"message": f"User {remove_email} removed"}
     return {"message": "Failed to remove user"}
+
+
+@app.get("/admin/users/all")
+async def list_all_users(authorization: Optional[str] = Header(None)):
+    """Get all users with their status (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    users = get_all_users()
+    return {
+        "users": [
+            {
+                "email": user_email,
+                "approved": user_data.get("approved", False),
+                "is_admin": user_data.get("is_admin", False) or user_email == "info@fm8.global",
+                "created": user_data.get("created", "")
+            }
+            for user_email, user_data in users.items()
+        ]
+    }
+
+
+@app.post("/admin/users/make-admin")
+async def make_user_admin(request: UserManagement, authorization: Optional[str] = Header(None)):
+    """Make user an admin (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    user_email = request.email.lower().strip()
+    if make_admin(user_email):
+        return {"message": f"User {user_email} is now an admin"}
+    return {"message": "Failed to promote user", "error": "User not found"}
+
+
+@app.post("/admin/users/remove-admin")
+async def remove_user_admin(request: UserManagement, authorization: Optional[str] = Header(None)):
+    """Remove admin privileges from user (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    user_email = request.email.lower().strip()
+    if remove_admin(user_email):
+        return {"message": f"Admin privileges removed from {user_email}"}
+    return {"message": "Failed to remove admin privileges"}
+
+
+@app.get("/admin/pending")
+async def list_pending_requests(authorization: Optional[str] = Header(None)):
+    """Get all pending access requests (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    return {"pending_requests": get_pending_requests()}
+
+
+@app.post("/admin/pending/approve")
+async def approve_pending_request(request: UserManagement, authorization: Optional[str] = Header(None)):
+    """Approve a pending access request (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    user_email = request.email.lower().strip()
+    if approve_request(user_email):
+        return {"message": f"Access approved for {user_email}"}
+    return {"message": "Failed to approve request", "error": "Request not found"}
+
+
+@app.post("/admin/pending/reject")
+async def reject_pending_request(request: UserManagement, authorization: Optional[str] = Header(None)):
+    """Reject a pending access request (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    user_email = request.email.lower().strip()
+    if reject_request(user_email):
+        return {"message": f"Request rejected for {user_email}"}
+    return {"message": "Failed to reject request"}
 
 
 # PROTECTED API ENDPOINTS
@@ -249,7 +360,7 @@ async def login_page():
     """Serve login page"""
     login_file = STATIC_DIR / "login.html"
     if login_file.exists():
-        with open(login_file, 'r') as f:
+        with open(login_file, 'r', encoding='utf-8') as f:
             return f.read()
     return "<h1>PunterEdge</h1><p>Login page not found. Visit /docs for API docs.</p>"
 

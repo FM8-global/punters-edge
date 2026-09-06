@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictions - PunterEdge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .header a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .predictions-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .prediction-row {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .prediction-row:last-child {
+            border-bottom: none;
+        }
+
+        .horse-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .race-id {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .score {
+            background: #f0f4ff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .odds {
+            color: #666;
+            text-align: center;
+        }
+
+        .loading {
+            padding: 40px;
+            text-align: center;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ef4444;
+        }
+
+        .header-row {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏇 Race Predictions</h1>
+            <a href="/">← Back to Dashboard</a>
+        </div>
+
+        <div class="predictions-list">
+            <div class="prediction-row header-row">
+                <div>Horse · Race</div>
+                <div style="text-align: center;">Score</div>
+                <div style="text-align: center;">Odds</div>
+                <div style="text-align: center;">Expected Value</div>
+            </div>
+            <div id="content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading predictions...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadPredictions() {
+            try {
+                const token = localStorage.getItem('punterEdgeToken');
+
+                if (!token) {
+                    document.getElementById('content').innerHTML =
+                        '<div class="error">Not logged in. <a href="/" style="color: inherit; text-decoration: underline;">Go to login</a></div>';
+                    return;
+                }
+
+                const response = await fetch('/bets?min_score=50', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to load predictions (${response.status})`);
+                }
+
+                const predictions = await response.json();
+
+                if (!predictions || predictions.length === 0) {
+                    document.getElementById('content').innerHTML =
+                        '<div style="padding: 40px; text-align: center; color: #999;">No predictions available at this time.</div>';
+                    return;
+                }
+
+                const html = predictions.map(p => `
+                    <div class="prediction-row">
+                        <div>
+                            <div class="horse-name">${p.horse_name || 'Unknown'}</div>
+                            <div class="race-id">Race: ${p.race_id || 'N/A'}</div>
+                        </div>
+                        <div class="score">${Math.round(p.score)}/100</div>
+                        <div class="odds">${p.odds ? p.odds.toFixed(2) : 'N/A'}</div>
+                        <div class="odds">${p.expected_value ? p.expected_value.toFixed(2) : 'N/A'}</div>
+                    </div>
+                `).join('');
+
+                document.getElementById('content').innerHTML = html;
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('content').innerHTML =
+                    `<div class="error">Error loading predictions: ${error.message}</div>`;
+            }
+        }
+
+        // Load predictions on page load
+        loadPredictions();
+    </script>
+</body>
+</html>

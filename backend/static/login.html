@@ -279,11 +279,223 @@
             margin-bottom: 8px;
         }
 
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tab-btn {
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: #666;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: #333;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .user-form {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 120px;
+            gap: 10px;
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .user-row {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-email {
+            flex: 1;
+            font-weight: 500;
+            color: #333;
+            font-size: 13px;
+        }
+
+        .user-status {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-right: 12px;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge.admin {
+            background: #dbeafe;
+            color: #0369a1;
+        }
+
+        .badge.approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-icon-btn {
+            padding: 6px 10px;
+            font-size: 11px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .action-icon-btn:hover {
+            background: #e5e7eb;
+            border-color: #d1d5db;
+        }
+
+        .action-icon-btn.danger {
+            color: #991b1b;
+            border-color: #fca5a5;
+            background: #fef2f2;
+        }
+
+        .action-icon-btn.danger:hover {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
         .footer {
             margin-top: 30px;
             text-align: center;
             font-size: 11px;
             color: #999;
+        }
+
+        .footer-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .footer-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        .pending-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .pending-row {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .pending-email {
+            flex: 1;
+            font-weight: 500;
+            color: #92400e;
+            font-size: 13px;
+        }
+
+        .pending-date {
+            font-size: 11px;
+            color: #b45309;
+            margin-right: 12px;
+        }
+
+        .pending-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .approve-btn {
+            padding: 6px 12px;
+            font-size: 11px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .approve-btn:hover {
+            background: #16a34a;
+        }
+
+        .reject-btn {
+            padding: 6px 12px;
+            font-size: 11px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .reject-btn:hover {
+            background: #dc2626;
         }
     </style>
 </head>
@@ -298,25 +510,62 @@
         <div id="loginSection">
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="email">Admin Email</label>
+                    <label for="email">Email Address</label>
                     <input
                         type="email"
                         id="email"
                         name="email"
-                        placeholder="info@fm8.global"
+                        placeholder="user@example.com"
                         required
                         autocomplete="email"
                     >
                 </div>
+
+                <div class="form-group" id="passwordGroup" style="display:none;">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                    >
+                </div>
+
                 <button type="submit" id="loginBtn">Sign In</button>
             </form>
 
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p>Signing in...</p>
+                <p>Processing...</p>
             </div>
 
             <div class="message" id="message"></div>
+
+            <div class="footer-link">
+                <p style="color: #666; font-size: 12px; margin-bottom: 10px;">Don't have access yet?</p>
+                <a href="#" onclick="showRequestAccess(); return false;">Request Access Here</a>
+            </div>
+        </div>
+
+        <!-- Request Access Modal -->
+        <div id="requestAccessModal" style="display:none; text-align: center;">
+            <form id="requestForm">
+                <div class="form-group">
+                    <label for="requestEmail">Email Address</label>
+                    <input
+                        type="email"
+                        id="requestEmail"
+                        name="email"
+                        placeholder="your@email.com"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+                <button type="submit" class="action-btn primary">Submit Request</button>
+                <button type="button" class="action-btn" onclick="document.getElementById('requestAccessModal').style.display='none'; document.getElementById('loginSection').style.display='block';" style="margin-top: 10px;">Back to Login</button>
+            </form>
+            <div class="message" id="requestMessage"></div>
         </div>
 
         <!-- Access Denied -->
@@ -336,20 +585,66 @@
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
 
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-value" id="raceCount">—</div>
-                    <div class="stat-label">Races Today</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value" id="betCount">—</div>
-                    <div class="stat-label">Predictions</div>
-                </div>
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+                <button class="tab-btn" onclick="switchTab('users')" id="usersTabBtn" style="display:none;">User Management</button>
             </div>
 
-            <button class="action-btn primary" onclick="viewPredictions()">View Predictions</button>
-            <button class="action-btn" onclick="viewAPI()">API Reference</button>
-            <button class="action-btn" onclick="showToken()">View Token</button>
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overviewTab">
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="raceCount">—</div>
+                        <div class="stat-label">Races Today</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="betCount">—</div>
+                        <div class="stat-label">Predictions</div>
+                    </div>
+                </div>
+
+                <button class="action-btn primary" onclick="viewPredictions()">View Predictions</button>
+                <button class="action-btn" onclick="viewAPI()">API Reference</button>
+                <button class="action-btn" onclick="showToken()">View Token</button>
+            </div>
+
+            <!-- User Management Tab -->
+            <div class="tab-content" id="usersTab">
+                <!-- Pending Requests Section -->
+                <div class="pending-section" id="pendingSection" style="display:none;">
+                    <div style="margin-bottom: 15px;">
+                        <h3 style="font-size: 14px; color: #b45309; margin-bottom: 12px;">⏳ Pending Access Requests</h3>
+                    </div>
+                    <div class="user-list" id="pendingList">
+                        <p style="color: #999; text-align: center; padding: 20px; font-size: 13px;">No pending requests</p>
+                    </div>
+                </div>
+
+                <!-- Add New User Section -->
+                <div class="user-form">
+                    <div style="margin-bottom: 15px;">
+                        <h3 style="font-size: 14px; color: #333; margin-bottom: 10px;">Add New User</h3>
+                    </div>
+                    <div class="form-row">
+                        <input
+                            type="email"
+                            id="newUserEmail"
+                            placeholder="user@example.com"
+                            style="padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 13px;"
+                        >
+                        <button class="action-btn" onclick="addNewUser()" style="margin-bottom: 0;">Add User</button>
+                    </div>
+                </div>
+
+                <!-- Approved Users Section -->
+                <div style="margin-bottom: 15px;">
+                    <h3 style="font-size: 14px; color: #333; margin-bottom: 12px;">Approved Users</h3>
+                </div>
+                <div class="user-list" id="userList">
+                    <p style="color: #999; text-align: center; padding: 20px; font-size: 13px;">Loading users...</p>
+                </div>
+            </div>
         </div>
 
         <div class="footer">
@@ -366,10 +661,23 @@
             }
         });
 
+        // Show password field for admin email
+        document.getElementById('email').addEventListener('input', (e) => {
+            const email = e.target.value.trim().toLowerCase();
+            const passwordGroup = document.getElementById('passwordGroup');
+            if (email === 'info@fm8.global') {
+                passwordGroup.style.display = 'block';
+            } else {
+                passwordGroup.style.display = 'none';
+                document.getElementById('password').value = '';
+            }
+        });
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById('email').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value || undefined;
             const loginBtn = document.getElementById('loginBtn');
             const loading = document.getElementById('loading');
             const message = document.getElementById('message');
@@ -379,10 +687,15 @@
             loading.style.display = 'block';
 
             try {
+                const payload = { email };
+                if (password) {
+                    payload.password = password;
+                }
+
                 const response = await fetch('/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
+                    body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
@@ -440,6 +753,168 @@
             }).then(r => r.json()).then(data => {
                 document.getElementById('betCount').textContent = (data.bets || []).length;
             });
+
+            // Check if admin and show user management tab
+            fetch('/admin/users/all', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => {
+                if (r.ok) {
+                    document.getElementById('usersTabBtn').style.display = 'block';
+                    loadUsers();
+                    loadPendingRequests();
+                }
+            }).catch(() => {
+                // Not admin, hide user management
+            });
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function loadUsers() {
+            const token = localStorage.getItem('punterEdgeToken');
+            fetch('/admin/users/all', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json()).then(data => {
+                renderUsers(data.users);
+            }).catch(err => {
+                console.error('Error loading users:', err);
+                document.getElementById('userList').innerHTML = '<p style="color: #999;">Failed to load users</p>';
+            });
+        }
+
+        function renderUsers(users) {
+            const userList = document.getElementById('userList');
+            const currentEmail = localStorage.getItem('punterEdgeEmail');
+
+            if (users.length === 0) {
+                userList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No users yet</p>';
+                return;
+            }
+
+            userList.innerHTML = users.map(user => {
+                const canRemoveAdmin = user.is_admin && user.email !== 'info@fm8.global';
+                const canDelete = user.email !== 'info@fm8.global';
+
+                return `
+                    <div class="user-row">
+                        <div class="user-email">${user.email}</div>
+                        <div class="user-status">
+                            ${user.is_admin ? '<span class="badge admin">👑 Admin</span>' : ''}
+                            ${user.approved ? '<span class="badge approved">✓ Approved</span>' : ''}
+                        </div>
+                        <div class="user-actions">
+                            ${!user.is_admin ? `
+                                <button class="action-icon-btn" onclick="makeAdminUser('${user.email}')">
+                                    Make Admin
+                                </button>
+                            ` : ''}
+                            ${canRemoveAdmin ? `
+                                <button class="action-icon-btn" onclick="removeAdminUser('${user.email}')">
+                                    Demote
+                                </button>
+                            ` : ''}
+                            ${canDelete ? `
+                                <button class="action-icon-btn danger" onclick="deleteUser('${user.email}')">
+                                    Delete
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addNewUser() {
+            const email = document.getElementById('newUserEmail').value.trim();
+            if (!email) {
+                alert('Please enter an email');
+                return;
+            }
+
+            const token = localStorage.getItem('punterEdgeToken');
+            fetch('/admin/users/add', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            }).then(r => r.json()).then(data => {
+                document.getElementById('newUserEmail').value = '';
+                alert('User added successfully!');
+                loadUsers();
+            }).catch(err => {
+                alert('Error adding user: ' + err.message);
+            });
+        }
+
+        function makeAdminUser(email) {
+            if (!confirm(`Make ${email} an admin?`)) return;
+
+            const token = localStorage.getItem('punterEdgeToken');
+            fetch('/admin/users/make-admin', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            }).then(r => r.json()).then(data => {
+                alert('User is now an admin!');
+                loadUsers();
+            }).catch(err => {
+                alert('Error: ' + err.message);
+            });
+        }
+
+        function removeAdminUser(email) {
+            if (!confirm(`Remove admin privileges from ${email}?`)) return;
+
+            const token = localStorage.getItem('punterEdgeToken');
+            fetch('/admin/users/remove-admin', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            }).then(r => r.json()).then(data => {
+                alert('Admin privileges removed!');
+                loadUsers();
+            }).catch(err => {
+                alert('Error: ' + err.message);
+            });
+        }
+
+        function deleteUser(email) {
+            if (!confirm(`Delete user ${email}? This cannot be undone.`)) return;
+
+            const token = localStorage.getItem('punterEdgeToken');
+            fetch('/admin/users/remove', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            }).then(r => r.json()).then(data => {
+                alert('User deleted!');
+                loadUsers();
+            }).catch(err => {
+                alert('Error: ' + err.message);
+            });
         }
 
         function showError(msg) {
@@ -458,7 +933,7 @@
         }
 
         function viewPredictions() {
-            window.location.href = '/bets';
+            window.location.href = '/static/predictions.html';
         }
 
         function viewAPI() {
@@ -468,6 +943,121 @@
         function showToken() {
             const token = localStorage.getItem('punterEdgeToken');
             alert(`Token: ${token}\n\nUse in API requests:\nAuthorization: Bearer ${token}`);
+        }
+
+        function showRequestAccess() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('requestAccessModal').style.display = 'block';
+        }
+
+        // Handle request access form submission
+        document.getElementById('requestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('requestEmail').value.trim();
+            const requestMessage = document.getElementById('requestMessage');
+            requestMessage.className = 'message';
+
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    requestMessage.textContent = '✓ Request submitted! An admin will review your request within 24 hours.';
+                    requestMessage.classList.add('success');
+                    document.getElementById('requestForm').reset();
+                } else {
+                    requestMessage.textContent = data.message || 'Request failed';
+                    requestMessage.classList.add('error');
+                }
+            } catch (error) {
+                requestMessage.textContent = 'Connection error. Please try again.';
+                requestMessage.classList.add('error');
+            }
+        });
+
+        function loadPendingRequests() {
+            const token = localStorage.getItem('punterEdgeToken');
+            fetch('/admin/pending', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json()).then(data => {
+                const requests = data.pending_requests || [];
+                if (requests.length > 0) {
+                    document.getElementById('pendingSection').style.display = 'block';
+                    renderPendingRequests(requests);
+                } else {
+                    document.getElementById('pendingSection').style.display = 'none';
+                }
+            }).catch(err => {
+                console.error('Error loading pending requests:', err);
+            });
+        }
+
+        function renderPendingRequests(requests) {
+            const pendingList = document.getElementById('pendingList');
+
+            if (requests.length === 0) {
+                pendingList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px; font-size: 13px;">No pending requests</p>';
+                return;
+            }
+
+            pendingList.innerHTML = requests.map(req => {
+                const requestedDate = new Date(req.requested).toLocaleDateString();
+                return `
+                    <div class="pending-row">
+                        <div class="pending-email">${req.email}</div>
+                        <div class="pending-date">Requested: ${requestedDate}</div>
+                        <div class="pending-actions">
+                            <button class="approve-btn" onclick="approvePendingRequest('${req.email}')">Approve</button>
+                            <button class="reject-btn" onclick="rejectPendingRequest('${req.email}')">Reject</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function approvePendingRequest(email) {
+            if (!confirm(`Approve access for ${email}?`)) return;
+
+            const token = localStorage.getItem('punterEdgeToken');
+            fetch('/admin/pending/approve', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            }).then(r => r.json()).then(data => {
+                alert('Access approved! User can now log in.');
+                loadPendingRequests();
+                loadUsers();
+            }).catch(err => {
+                alert('Error: ' + err.message);
+            });
+        }
+
+        function rejectPendingRequest(email) {
+            if (!confirm(`Reject access request for ${email}?`)) return;
+
+            const token = localStorage.getItem('punterEdgeToken');
+            fetch('/admin/pending/reject', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            }).then(r => r.json()).then(data => {
+                alert('Request rejected.');
+                loadPendingRequests();
+            }).catch(err => {
+                alert('Error: ' + err.message);
+            });
         }
     </script>
 </body>
