@@ -78,19 +78,26 @@ def init_db():
         cursor.close()
         conn.close()
 
-        # Initialize default admin if not exists
-        if not is_user_approved(ADMIN_EMAIL):
-            default_password_hash = hash_password("admin123")
-            conn = get_db_connection()
+        # Initialize default admin if not exists, or fix password if exists
+        conn = get_db_connection()
+        if conn:
             cursor = conn.cursor()
+            default_password_hash = hash_password("admin123")
+
+            # Always ensure admin has correct password
             cursor.execute(
-                "INSERT INTO users (email, approved, is_admin, password_hash) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING",
+                """INSERT INTO users (email, approved, is_admin, password_hash)
+                   VALUES (%s, %s, %s, %s)
+                   ON CONFLICT (email) DO UPDATE SET
+                   password_hash = EXCLUDED.password_hash,
+                   approved = TRUE,
+                   is_admin = TRUE""",
                 (ADMIN_EMAIL, True, True, default_password_hash)
             )
             conn.commit()
             cursor.close()
             conn.close()
-            logger.info(f"Initialized default admin: {ADMIN_EMAIL}")
+            logger.info(f"Initialized/verified admin: {ADMIN_EMAIL}")
 
         logger.info("Database schema initialized successfully")
     except Exception as e:
