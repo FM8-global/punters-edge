@@ -622,6 +622,7 @@
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
                 <button class="tab-btn" onclick="switchTab('users')" id="usersTabBtn" style="display:none;">User Management</button>
+                <button class="tab-btn" onclick="switchTab('outcomes')" id="outcomesTabBtn" style="display:none;">Outcomes</button>
             </div>
 
             <!-- Overview Tab -->
@@ -639,7 +640,16 @@
 
                 <button class="action-btn primary" onclick="viewPredictions()">View Predictions</button>
                 <button class="action-btn" onclick="viewAPI()">API Reference</button>
+                <button class="action-btn" id="outcomesBtn" onclick="openOutcomesDashboard()" style="display:none;">📊 Outcomes Dashboard</button>
                 <button class="action-btn" onclick="showToken()">View Token</button>
+            </div>
+
+            <!-- Outcomes Tab -->
+            <div class="tab-content" id="outcomesTab">
+                <div style="text-align: center; padding: 30px;">
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Access the full outcomes analytics dashboard</p>
+                    <button class="action-btn primary" onclick="openOutcomesDashboard()">📊 Open Outcomes Dashboard</button>
+                </div>
             </div>
 
             <!-- User Management Tab -->
@@ -787,12 +797,14 @@
                 document.getElementById('betCount').textContent = (data.bets || []).length;
             });
 
-            // Check if admin and show user management tab
+            // Check if admin and show user management + outcomes tabs
             fetch('/admin/users/all', {
                 headers: { 'Authorization': `Bearer ${token}` }
             }).then(r => {
                 if (r.ok) {
                     document.getElementById('usersTabBtn').style.display = 'block';
+                    document.getElementById('outcomesTabBtn').style.display = 'block';
+                    document.getElementById('outcomesBtn').style.display = 'block';
                     loadUsers();
                     loadPendingRequests();
                 }
@@ -976,6 +988,10 @@
         function showToken() {
             const token = localStorage.getItem('punterEdgeToken');
             alert(`Token: ${token}\n\nUse in API requests:\nAuthorization: Bearer ${token}`);
+        }
+
+        function openOutcomesDashboard() {
+            window.location.href = '/static/outcomes.html';
         }
 
         function showRequestAccess() {

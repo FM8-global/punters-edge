@@ -1,0 +1,129 @@
+================================================================================
+QUICK DEPLOYMENT GUIDE - PunterEdge WSGI 422 Error Fix
+================================================================================
+
+WHAT WAS FIXED:
+  ✗ Before: POST /login returns HTTP 422 "Input should be a valid dictionary"
+  ✓ After:  POST /login works correctly, returns auth token
+
+FILES TO DEPLOY:
+  backend/pythonanywhere_wsgi.py  (Copy this file to PythonAnywhere)
+
+================================================================================
+DEPLOYMENT STEPS (5 minutes)
+================================================================================
+
+1. UPLOAD THE FIX
+   ----------------
+   Option A: If using Git
+     git add backend/pythonanywhere_wsgi.py
+     git commit -m "Add WSGI adapter fix"
+     git push origin main
+
+     Then in PythonAnywhere Bash:
+     cd ~/punter-edge && git pull origin main
+
+   Option B: Manual upload
+     Go to PythonAnywhere Files tab
+     Upload pythonanywhere_wsgi.py to /home/fm8app/punter-edge/backend/
+
+
+2. UPDATE WSGI CONFIGURATION
+   -------------------------
+   1. Log in to https://www.pythonanywhere.com
+   2. Go to "Web" tab
+   3. Click on "fm8app.pythonanywhere.com"
+   4. Find "WSGI configuration file" section
+   5. Click on the file path to edit it
+      (Should be something like /var/www/fm8app_pythonanywhere_com_wsgi.py)
+   6. Replace the content with:
+
+      -------- START COPY --------
+      import sys
+      import os
+
+      app_dir = '/home/fm8app/punter-edge/backend'
+      if app_dir not in sys.path:
+          sys.path.insert(0, app_dir)
+
+      os.environ['API_KEY'] = 'c9edb4f8-4c7f-4a20-b0a5-edbac822e0ec'
+
+      from pythonanywhere_wsgi import application
+      -------- END COPY --------
+
+   7. Click "Save"
+
+
+3. RELOAD THE APP
+   ---------------
+   1. Still on Web tab
+   2. Click the green "Reload [your-app]" button
+   3. Wait for message "Reloaded at HH:MM"
+
+
+4. TEST IT
+   --------
+
+   Test Health Check (should always work):
+   $ curl https://fm8app.pythonanywhere.com/health
+
+   Expected: {"status":"ok"}
+
+
+   Test Login (this is what was broken before):
+   $ curl -X POST https://fm8app.pythonanywhere.com/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"info@fm8.global"}'
+
+   Expected: {"success":true,"token":"...","message":"Welcome..."}
+
+   If you get {"success":false,"message":"Email not approved..."} - GOOD!
+   This means the endpoint is working, user just needs to be approved.
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+If you get 422 error still:
+  → Make sure you saved the WSGI file
+  → Make sure you clicked Reload button
+  → Wait 30 seconds and try again
+  → Check error log: Web tab → Log files → error log
+
+If you get "Module not found" error:
+  → Check the path is: /home/fm8app/punter-edge/backend/pythonanywhere_wsgi.py
+  → Verify working directory is: /home/fm8app/punter-edge/backend
+  → Check file was uploaded correctly
+
+If you get other errors:
+  → Check error log for the actual error message
+  → The WSGI adapter will show detailed traceback there
+
+================================================================================
+VERIFY DEPLOYMENT
+================================================================================
+
+All of these should work after deployment:
+
+✓ GET /health
+✓ GET /
+✓ POST /login with JSON
+✓ POST /admin/users/add with auth token
+✓ POST /logout with auth token
+
+Check error log for warnings/errors: Should be empty or normal startup logs
+
+================================================================================
+DONE!
+================================================================================
+
+If all tests pass, the fix is working correctly!
+
+Your app is now live at: https://fm8app.pythonanywhere.com/
+
+For more details:
+  - Technical explanation: See WSGI_FIX_EXPLANATION.md
+  - Full deployment guide: See DEPLOYMENT_INSTRUCTIONS.md
+  - Summary report: See WSGI_FIX_SUMMARY.md
+
+Questions? Check the error log or review those documentation files.

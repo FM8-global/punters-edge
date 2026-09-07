@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PunterEdge - Outcomes Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+        }
+
+        .navbar button {
+            background: #e74c3c;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .navbar button:hover {
+            background: #c0392b;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .tab {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        button {
+            background: #667eea;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .win {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .place {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .loss {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .positive-roi {
+            color: #27ae60;
+        }
+
+        .negative-roi {
+            color: #e74c3c;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: white;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: white;
+            text-decoration: none;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🏇 Outcomes Dashboard</h1>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <div class="container">
+        <a href="/" class="back-link">← Back to Dashboard</a>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('horse-performance')">Horse Performance</button>
+            <button class="tab" onclick="switchTab('user-performance')">User Performance</button>
+            <button class="tab" onclick="switchTab('outcomes-report')">Outcomes Report</button>
+        </div>
+
+        <!-- Horse Performance Tab -->
+        <div id="horse-performance" class="tab-content active">
+            <div class="card">
+                <h2>🐴 Horse Performance Summary</h2>
+                <p style="color: #666; margin-bottom: 1rem;">Track prediction success rates and ROI by horse</p>
+                <div class="table-container" id="horse-perf-container">
+                    <div class="loading">Loading horse performance data...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Performance Tab -->
+        <div id="user-performance" class="tab-content">
+            <div class="card">
+                <h2>👥 User Performance Summary</h2>
+                <p style="color: #666; margin-bottom: 1rem;">Track prediction accuracy and profits by user</p>
+                <div class="table-container" id="user-perf-container">
+                    <div class="loading">Loading user performance data...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outcomes Report Tab -->
+        <div id="outcomes-report" class="tab-content">
+            <div class="card">
+                <h2>📊 Outcomes Report</h2>
+                <p style="color: #666; margin-bottom: 1rem;">Detailed outcomes with filtering by date and score</p>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Start Date</label>
+                        <input type="date" id="start-date">
+                    </div>
+                    <div class="filter-group">
+                        <label>End Date</label>
+                        <input type="date" id="end-date">
+                    </div>
+                    <div class="filter-group">
+                        <label>Min Score</label>
+                        <input type="number" id="min-score" value="50" min="0" max="100" step="5">
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button onclick="generateReport()">Generate Report</button>
+                    </div>
+                </div>
+
+                <div id="report-stats" class="stats-grid"></div>
+                <div class="table-container" id="outcomes-table-container">
+                    <div class="loading">Click "Generate Report" to view outcomes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('punteredge_token');
+
+        if (!token) {
+            window.location.href = '/';
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Load data if first time
+            if (tabName === 'horse-performance') {
+                loadHorsePerformance();
+            } else if (tabName === 'user-performance') {
+                loadUserPerformance();
+            }
+        }
+
+        async function loadHorsePerformance() {
+            const container = document.getElementById('horse-perf-container');
+            try {
+                const response = await fetch('/admin/outcomes/horse-performance', {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                const horses = data.horses || [];
+
+                if (horses.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No horse performance data yet</div>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>Horse</th><th>Predictions</th><th>Wins</th><th>Places</th><th>Losses</th><th>Win Rate %</th><th>Avg ROI %</th></tr></thead><tbody>';
+
+                horses.forEach(horse => {
+                    const roi = horse.avg_roi || 0;
+                    const roiClass = roi >= 0 ? 'positive-roi' : 'negative-roi';
+                    html += `<tr onclick="showHorseDetails('${horse.horse_name}')" style="cursor:pointer;">
+                        <td><strong>${horse.horse_name}</strong></td>
+                        <td>${horse.total_predictions}</td>
+                        <td><span class="win">${horse.wins}</span></td>
+                        <td><span class="place">${horse.places}</span></td>
+                        <td><span class="loss">${horse.losses}</span></td>
+                        <td>${horse.win_rate.toFixed(2)}%</td>
+                        <td class="${roiClass}">${roi.toFixed(2)}%</td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div class="error">Error loading data: ${error.message}</div>`;
+            }
+        }
+
+        async function loadUserPerformance() {
+            const container = document.getElementById('user-perf-container');
+            try {
+                const response = await fetch('/admin/outcomes/user-performance', {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                const users = data.users || [];
+
+                if (users.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No user performance data yet</div>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>Email</th><th>Predictions</th><th>Wins</th><th>Places</th><th>Losses</th><th>Win Rate</th><th>Avg ROI</th><th>Total Profit</th></tr></thead><tbody>';
+
+                users.forEach(user => {
+                    const profit = user.total_profit || 0;
+                    const profitClass = profit >= 0 ? 'positive-roi' : 'negative-roi';
+                    html += `<tr>
+                        <td><strong>${user.email}</strong></td>
+                        <td>${user.total_predictions}</td>
+                        <td><span class="win">${user.wins}</span></td>
+                        <td><span class="place">${user.places}</span></td>
+                        <td><span class="loss">${user.losses}</span></td>
+                        <td>${user.win_rate.toFixed(2)}%</td>
+                        <td class="${profit >= 0 ? 'positive-roi' : 'negative-roi'}">${user.avg_roi.toFixed(2)}%</td>
+                        <td class="${profitClass}">$${profit.toFixed(2)}</td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div class="error">Error loading data: ${error.message}</div>`;
+            }
+        }
+
+        async function generateReport() {
+            const container = document.getElementById('outcomes-table-container');
+            const statsContainer = document.getElementById('report-stats');
+            container.innerHTML = '<div class="loading">Generating report...</div>';
+            statsContainer.innerHTML = '';
+
+            try {
+                const startDate = document.getElementById('start-date').value;
+                const endDate = document.getElementById('end-date').value;
+                const minScore = parseFloat(document.getElementById('min-score').value) || 50;
+
+                let url = '/admin/outcomes/report?min_score=' + minScore;
+                if (startDate) url += '&start_date=' + startDate;
+                if (endDate) url += '&end_date=' + endDate;
+
+                const response = await fetch(url, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                const outcomes = data.outcomes || [];
+
+                // Display stats
+                let statsHtml = `
+                    <div class="stat-card">
+                        <div class="label">Total Predictions</div>
+                        <div class="value">${data.total_predictions}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Wins</div>
+                        <div class="value" style="color: #27ae60;">${data.wins}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Places</div>
+                        <div class="value" style="color: #f39c12;">${data.places}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Losses</div>
+                        <div class="value" style="color: #e74c3c;">${data.losses}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Win Rate</div>
+                        <div class="value">${data.win_rate.toFixed(2)}%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Avg ROI</div>
+                        <div class="value">${data.avg_roi.toFixed(2)}%</div>
+                    </div>
+                `;
+                statsContainer.innerHTML = statsHtml;
+
+                if (outcomes.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No outcomes found for the specified criteria</div>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>Race ID</th><th>Track</th><th>Horse</th><th>Score</th><th>Odds</th><th>Result</th><th>ROI %</th><th>Date</th></tr></thead><tbody>';
+
+                outcomes.forEach(outcome => {
+                    const roi = outcome.roi || 0;
+                    const roiClass = roi >= 0 ? 'positive-roi' : 'negative-roi';
+                    const resultClass = outcome.actual_result === 'win' ? 'win' : outcome.actual_result === 'place' ? 'place' : 'loss';
+                    const track = outcome.track || outcome.race_id.split('_')[0] || 'Unknown';
+                    const raceNum = outcome.race_num || outcome.race_id.split('_')[1] || '—';
+
+                    html += `<tr>
+                        <td><strong>${outcome.race_id}</strong><br><small style="color:#999;">Race ${raceNum}</small></td>
+                        <td><strong>${track}</strong></td>
+                        <td>${outcome.horse_name}</td>
+                        <td>${outcome.predicted_score.toFixed(2)}</td>
+                        <td>${outcome.predicted_odds ? outcome.predicted_odds.toFixed(2) : '—'}</td>
+                        <td><span class="${resultClass}">${outcome.actual_result.toUpperCase()}</span></td>
+                        <td class="${roiClass}">${roi.toFixed(2)}%</td>
+                        <td>${new Date(outcome.prediction_date).toLocaleDateString()}</td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div class="error">Error generating report: ${error.message}</div>`;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('punteredge_token');
+            window.location.href = '/';
+        }
+
+        async function showHorseDetails(horseName) {
+            const container = document.getElementById('horse-perf-container');
+            container.innerHTML = '<div class="loading">Loading horse details...</div>';
+
+            try {
+                const response = await fetch(`/admin/outcomes/horse/${encodeURIComponent(horseName)}`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                const outcomes = data.outcomes || [];
+
+                let html = `<div style="margin-bottom: 20px;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 10px;">📋 ${horseName} - Race History</h3>
+                    <button onclick="loadHorsePerformance()" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">← Back to All Horses</button>
+                </div>`;
+
+                if (outcomes.length === 0) {
+                    container.innerHTML = html + '<div class="empty-state">No race history for this horse</div>';
+                    return;
+                }
+
+                html += '<table><thead><tr><th>Race ID</th><th>Track</th><th>Race #</th><th>Score</th><th>Odds</th><th>Result</th><th>ROI %</th><th>Date</th></tr></thead><tbody>';
+
+                outcomes.forEach(outcome => {
+                    const roi = outcome.roi || 0;
+                    const roiClass = roi >= 0 ? 'positive-roi' : 'negative-roi';
+                    const resultClass = outcome.actual_result === 'win' ? 'win' : outcome.actual_result === 'place' ? 'place' : 'loss';
+                    const track = outcome.track || 'Unknown';
+                    const raceNum = outcome.race_num || '—';
+
+                    html += `<tr>
+                        <td>${outcome.race_id}</td>
+                        <td><strong>${track}</strong></td>
+                        <td>${raceNum}</td>
+                        <td>${outcome.predicted_score.toFixed(2)}</td>
+                        <td>${outcome.predicted_odds ? outcome.predicted_odds.toFixed(2) : '—'}</td>
+                        <td><span class="${resultClass}">${outcome.actual_result.toUpperCase()}</span></td>
+                        <td class="${roiClass}">${roi.toFixed(2)}%</td>
+                        <td>${new Date(outcome.prediction_date).toLocaleDateString()}</td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div class="error">Error loading horse details: ${error.message}</div>`;
+            }
+        }
+
+        // Load horse performance on page load
+        window.addEventListener('load', () => {
+            loadHorsePerformance();
+        });
+    </script>
+</body>
+</html>

@@ -10,17 +10,21 @@ from models import Race, BetPrediction, RaceResponse
 from scoring import BetScorer
 from typing import List, Optional
 from dotenv import load_dotenv
-from auth import (
+from auth_json import (
     validate_session, create_session, logout_session,
     is_user_approved, add_approved_user, remove_approved_user,
     get_approved_users, is_admin, is_email_valid, make_admin,
     remove_admin, get_all_users, request_access, get_pending_requests,
     approve_request, reject_request, verify_admin_password, ADMIN_EMAIL, init_db
 )
-from compliance import (
+from compliance_json import (
     init_compliance_tables, verify_age, is_age_verified, is_self_excluded,
     set_betting_limits, get_betting_limits, request_self_exclusion,
     log_betting_activity, get_compliance_report, create_compliance_alert
+)
+from outcomes import (
+    init_outcomes_tables, record_prediction_outcome, get_horse_performance,
+    get_user_performance, get_outcomes_report, get_outcomes_by_horse
 )
 from pydantic import BaseModel
 
@@ -53,7 +57,8 @@ async def startup_event():
     try:
         init_db()
         init_compliance_tables()
-        logger.info("Database and compliance tables initialized successfully")
+        init_outcomes_tables()
+        logger.info("Database, compliance, and outcomes tables initialized successfully")
     except Exception as e:
         logger.error(f"Database initialization failed: {e}")
         raise
@@ -197,6 +202,93 @@ async def check_age_verified(request: LoginRequest):
         "email": email,
         "age_verified": verified
     }
+
+
+# OUTCOMES ENDPOINTS (admin only)
+
+@app.get("/admin/outcomes/horse-performance")
+async def get_horse_perf(authorization: Optional[str] = Header(None)):
+    """Get horse performance summary (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    return {"horses": get_horse_performance()}
+
+
+@app.get("/admin/outcomes/user-performance")
+async def get_user_perf(authorization: Optional[str] = Header(None)):
+    """Get user performance summary (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    return {"users": get_user_performance()}
+
+
+@app.get("/admin/outcomes/report")
+async def get_outcomes_report_endpoint(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    min_score: Optional[float] = 50.0,
+    authorization: Optional[str] = Header(None)
+):
+    """Get outcomes report for date range (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    from datetime import datetime
+    start = datetime.fromisoformat(start_date) if start_date else None
+    end = datetime.fromisoformat(end_date) if end_date else None
+
+    return get_outcomes_report(start_date=start, end_date=end, min_score=min_score)
+
+
+@app.get("/admin/outcomes/horse/{horse_name}")
+async def get_horse_outcomes(horse_name: str, authorization: Optional[str] = Header(None)):
+    """Get all outcomes for specific horse (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    return {"outcomes": get_outcomes_by_horse(horse_name)}
+
+
+@app.post("/admin/outcomes/record")
+async def record_outcome(
+    race_id: str,
+    horse_name: str,
+    predicted_score: float,
+    predicted_odds: float,
+    actual_result: str,
+    actual_odds: Optional[float] = None,
+    payoff: Optional[float] = None,
+    track: Optional[str] = None,
+    race_num: Optional[str] = None,
+    authorization: Optional[str] = Header(None)
+):
+    """Record prediction outcome (admin only)"""
+    email = get_current_user(authorization)
+    if not is_admin(email):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    from datetime import datetime
+    if record_prediction_outcome(
+        race_id=race_id,
+        horse_name=horse_name,
+        predicted_score=predicted_score,
+        predicted_odds=predicted_odds,
+        prediction_date=datetime.now(),
+        race_date=datetime.now(),
+        actual_result=actual_result,
+        actual_odds=actual_odds,
+        payoff=payoff,
+        track=track,
+        race_num=race_num
+    ):
+        return {"success": True, "message": f"Outcome recorded for {horse_name} in race {race_id}"}
+    return {"success": False, "message": "Failed to record outcome"}
 
 
 @app.get("/me")

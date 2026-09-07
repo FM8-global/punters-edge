@@ -1,0 +1,20 @@
+{
+  "info@fm8.global": {
+    "approved": true,
+    "is_admin": true,
+    "password_hash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "created": "2026-09-06T17:22:12.628043"
+  },
+  "punter1@example.com": {
+    "approved": true,
+    "is_admin": false,
+    "password_hash": null,
+    "created": "2026-09-06T17:22:12.628059"
+  },
+  "peter@fm8.global": {
+    "approved": true,
+    "is_admin": true,
+    "password_hash": null,
+    "created": "2026-09-06T17:44:24.921261"
+  }
+}

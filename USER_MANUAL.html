@@ -1,0 +1,366 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PunterEdge User Manual</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 { color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        h2 { color: #764ba2; margin-top: 30px; }
+        h3 { color: #555; }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .step { background: #f0f4ff; padding: 15px; border-left: 4px solid #667eea; margin: 15px 0; border-radius: 4px; }
+        .note { background: #fffaed; padding: 15px; border-left: 4px solid #f59e0b; margin: 15px 0; border-radius: 4px; }
+        .success { background: #f0fdf4; padding: 15px; border-left: 4px solid #22c55e; margin: 15px 0; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f3f4f6; font-weight: 600; }
+        code { background: #f3f4f6; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; }
+        pre { background: #1f2937; color: #e5e7eb; padding: 15px; border-radius: 4px; overflow-x: auto; }
+        .toc { background: #f9fafb; padding: 20px; border-radius: 4px; }
+        .toc ul { margin: 0; padding-left: 20px; }
+        .toc a { color: #667eea; }
+        .checklist { list-style: none; padding: 0; }
+        .checklist li { padding: 8px 0; }
+        .checklist li:before { content: "☐ "; margin-right: 10px; color: #667eea; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏇 PunterEdge User Manual</h1>
+        
+        <h2>Overview</h2>
+        <p>PunterEdge is an AI-powered horse racing betting analysis platform. It provides detailed race predictions and betting insights to approved users.</p>
+        <p><strong>Live App:</strong> <a href="https://punters-edge-1.onrender.com" target="_blank">https://punters-edge-1.onrender.com</a></p>
+
+        <h2>Table of Contents</h2>
+        <div class="toc">
+            <ul>
+                <li><a href="#getting-access">Getting Access</a></li>
+                <li><a href="#login-dashboard">Login & Dashboard</a></li>
+                <li><a href="#using-app">Using the App</a></li>
+                <li><a href="#admin-guide">Admin Guide</a></li>
+                <li><a href="#api-reference">API Reference</a></li>
+            </ul>
+        </div>
+
+        <h2 id="getting-access">Getting Access</h2>
+        
+        <h3>For New Users</h3>
+        
+        <div class="step">
+            <h4>Step 1: Request Access</h4>
+            <ul>
+                <li>Send an email to <strong>info@fm8.global</strong></li>
+                <li>Subject: "PunterEdge Access Request"</li>
+                <li>Include your email address in the message</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h4>Step 2: Wait for Approval</h4>
+            <ul>
+                <li>The admin will review your request</li>
+                <li>You'll be added to the approved users list (typically within 24 hours)</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h4>Step 3: Login</h4>
+            <ul>
+                <li>Visit <a href="https://punters-edge-1.onrender.com" target="_blank">https://punters-edge-1.onrender.com</a></li>
+                <li>Enter your email address</li>
+                <li>Click "Sign In"</li>
+                <li>You're in! No password required.</li>
+            </ul>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> Only approved users can access PunterEdge. Contact info@fm8.global if you have questions about your approval status.
+        </div>
+
+        <h2 id="login-dashboard">Login & Dashboard</h2>
+
+        <h3>Logging In</h3>
+        <ol>
+            <li>Go to <a href="https://punters-edge-1.onrender.com" target="_blank">https://punters-edge-1.onrender.com</a></li>
+            <li>Enter your email address (the one registered with the system)</li>
+            <li>Click <strong>Sign In</strong></li>
+            <li>Your session token is automatically saved to your browser</li>
+        </ol>
+
+        <h3>Dashboard Overview</h3>
+        <p>Once logged in, you'll see the <strong>Admin Dashboard</strong> with two tabs:</p>
+
+        <h4>Overview Tab (Default)</h4>
+        <p>Shows key statistics and quick actions:</p>
+        <ul>
+            <li><strong>Races Today</strong> - Number of upcoming races with analysis</li>
+            <li><strong>Predictions</strong> - Total AI predictions generated</li>
+            <li><strong>View Predictions</strong> - Browse all AI-generated betting recommendations</li>
+            <li><strong>API Reference</strong> - Access technical API documentation</li>
+            <li><strong>View Token</strong> - Display your authentication token for API use</li>
+        </ul>
+
+        <h4>User Management Tab (Admin Only)</h4>
+        <p>Allows admins to manage user access:</p>
+        <ul>
+            <li>Add new approved users</li>
+            <li>View all users and their status</li>
+            <li>Promote users to admin</li>
+            <li>Remove user access</li>
+        </ul>
+
+        <h3>Session Management</h3>
+        <ul>
+            <li>Your login session lasts <strong>30 days</strong></li>
+            <li>Token is stored in browser storage (private, not shared)</li>
+            <li>Click <strong>Logout</strong> to end your session immediately</li>
+            <li>Logging out clears your token</li>
+        </ul>
+
+        <h2 id="using-app">Using the App</h2>
+
+        <h3>Viewing Race Predictions</h3>
+        <ol>
+            <li>From the Dashboard, click <strong>View Predictions</strong></li>
+            <li>You'll see AI-generated predictions for upcoming races</li>
+            <li>Each prediction includes:
+                <ul>
+                    <li>Horse name and race ID</li>
+                    <li>AI confidence score (0-100)</li>
+                    <li>Odds and betting information</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>Understanding Predictions</h3>
+        <table>
+            <tr>
+                <th>Score Range</th>
+                <th>Confidence Level</th>
+                <th>Recommendation</th>
+            </tr>
+            <tr>
+                <td>80-100</td>
+                <td>Very Strong</td>
+                <td>High confidence prediction</td>
+            </tr>
+            <tr>
+                <td>60-79</td>
+                <td>Strong</td>
+                <td>Good confidence prediction</td>
+            </tr>
+            <tr>
+                <td>50-59</td>
+                <td>Moderate</td>
+                <td>Use with caution</td>
+            </tr>
+            <tr>
+                <td>Below 50</td>
+                <td>Low</td>
+                <td>Filtered out by default</td>
+            </tr>
+        </table>
+
+        <h3>API Reference</h3>
+        <p>For developers and advanced users:</p>
+        <ol>
+            <li>Click <strong>API Reference</strong> on the Dashboard</li>
+            <li>Access the Swagger/OpenAPI documentation</li>
+            <li>View all available endpoints</li>
+            <li>Try API calls directly in the browser</li>
+        </ol>
+
+        <h3>Viewing Your Token</h3>
+        <ol>
+            <li>Click <strong>View Token</strong> on the Dashboard</li>
+            <li>Copy your authentication token</li>
+            <li>Use this token for API requests</li>
+        </ol>
+
+        <h2 id="admin-guide">Admin Guide</h2>
+
+        <h3>Admin Responsibilities</h3>
+        <p>Admins manage user access and system configuration. The main admin email is <strong>info@fm8.global</strong>.</p>
+
+        <h3>Adding New Users</h3>
+        <div class="step">
+            <strong>Step 1:</strong> Log into <a href="https://punters-edge-1.onrender.com" target="_blank">https://punters-edge-1.onrender.com</a> with admin account
+        </div>
+
+        <div class="step">
+            <strong>Step 2:</strong> Click the <strong>User Management</strong> tab
+        </div>
+
+        <div class="step">
+            <strong>Step 3:</strong> In the "Add New User" section:
+            <ul>
+                <li>Enter the user's email address</li>
+                <li>Click <strong>Add User</strong></li>
+            </ul>
+        </div>
+
+        <div class="success">
+            <strong>Step 4:</strong> The user is now approved and can log in immediately!
+        </div>
+
+        <h3>Promoting Users to Admin</h3>
+        <p>To give a user admin privileges:</p>
+        <ol>
+            <li>Go to <strong>User Management</strong> tab</li>
+            <li>Find the user in the "Approved Users" list</li>
+            <li>Click <strong>Make Admin</strong> next to their name</li>
+            <li>Confirm the promotion</li>
+        </ol>
+
+        <div class="success">
+            After promotion:
+            <ul>
+                <li>User can see the User Management tab</li>
+                <li>User can add new users and manage approvals</li>
+                <li>User can promote other users to admin</li>
+            </ul>
+        </div>
+
+        <h3>Removing Admin Status</h3>
+        <p>To demote an admin (except the main admin):</p>
+        <ol>
+            <li>Go to <strong>User Management</strong> tab</li>
+            <li>Click <strong>Demote</strong> next to the admin's name</li>
+            <li>Confirm the action</li>
+        </ol>
+
+        <div class="note">
+            The main admin (info@fm8.global) cannot be demoted or deleted.
+        </div>
+
+        <h3>Deleting Users</h3>
+        <p>To remove a user from the system:</p>
+        <ol>
+            <li>Go to <strong>User Management</strong> tab</li>
+            <li>Click <strong>Delete</strong> next to the user's name</li>
+            <li>Confirm the deletion</li>
+        </ol>
+
+        <div class="note">
+            Deleted users cannot log in. They must be re-added if they need access again.
+        </div>
+
+        <h2 id="api-reference">API Reference</h2>
+
+        <h3>Authentication</h3>
+        <p>All API requests require an authorization token:</p>
+        <pre>curl https://punters-edge-1.onrender.com/bets \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"</pre>
+        <p>Token expires after 30 days.</p>
+
+        <h3>Main Endpoints</h3>
+        <table>
+            <tr>
+                <th>Endpoint</th>
+                <th>Method</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td>/login</td>
+                <td>POST</td>
+                <td>Get authentication token</td>
+            </tr>
+            <tr>
+                <td>/logout</td>
+                <td>POST</td>
+                <td>End session</td>
+            </tr>
+            <tr>
+                <td>/bets</td>
+                <td>GET</td>
+                <td>Get all AI predictions</td>
+            </tr>
+            <tr>
+                <td>/races</td>
+                <td>GET</td>
+                <td>Get upcoming races</td>
+            </tr>
+            <tr>
+                <td>/admin/users</td>
+                <td>GET</td>
+                <td>List approved users (admin)</td>
+            </tr>
+            <tr>
+                <td>/admin/users/add</td>
+                <td>POST</td>
+                <td>Add new user (admin)</td>
+            </tr>
+            <tr>
+                <td>/docs</td>
+                <td>GET</td>
+                <td>Swagger API documentation</td>
+            </tr>
+        </table>
+
+        <h3>Example: Get Predictions</h3>
+        <pre>curl "https://punters-edge-1.onrender.com/bets?min_score=50" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"</pre>
+        <p>Returns predictions with AI scores ≥ 50.</p>
+
+        <h3>Example: Get Races</h3>
+        <pre>curl "https://punters-edge-1.onrender.com/races" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"</pre>
+        <p>Returns upcoming races with live odds.</p>
+
+        <h2>Getting Started Checklist</h2>
+
+        <h3>For New Users:</h3>
+        <ul class="checklist">
+            <li>Email info@fm8.global requesting access</li>
+            <li>Wait for approval notification</li>
+            <li>Log in at https://punters-edge-1.onrender.com</li>
+            <li>View your first race predictions</li>
+            <li>Explore the API Reference if interested</li>
+        </ul>
+
+        <h3>For Admins:</h3>
+        <ul class="checklist">
+            <li>Log in with admin credentials</li>
+            <li>Add approved users via User Management tab</li>
+            <li>Promote users to admin if needed</li>
+            <li>Monitor user access and activity</li>
+        </ul>
+
+        <h2>Support & Questions</h2>
+        <p><strong>📧 Email:</strong> info@fm8.global</p>
+        <p><strong>Expected Response Time:</strong> 24-48 hours</p>
+
+        <h2>System Information</h2>
+        <ul>
+            <li><strong>Platform:</strong> PunterEdge on Render (ASGI FastAPI)</li>
+            <li><strong>Session Duration:</strong> 30 days</li>
+            <li><strong>Data Storage:</strong> File-based JSON</li>
+            <li><strong>API Version:</strong> v0.1.0</li>
+            <li><strong>Last Updated:</strong> September 2026</li>
+        </ul>
+
+        <hr style="margin-top: 40px; border: none; border-top: 1px solid #ddd;">
+        <p style="text-align: center; color: #999; font-size: 14px; margin-top: 20px;">
+            For questions or support, contact <strong>info@fm8.global</strong>
+        </p>
+    </div>
+</body>
+</html>
