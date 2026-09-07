@@ -548,8 +548,15 @@
             </div>
         </div>
 
-        <!-- Request Access Modal -->
+        <!-- Request Access Modal with Age Verification -->
         <div id="requestAccessModal" style="display:none; text-align: center;">
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #667eea; margin-bottom: 10px;">⚠️ Australian Gambling Compliance</h3>
+                <p style="font-size: 13px; color: #666; margin: 10px 0;">
+                    PunterEdge is only available to users aged 18 years or older.
+                </p>
+            </div>
+
             <form id="requestForm">
                 <div class="form-group">
                     <label for="requestEmail">Email Address</label>
@@ -562,10 +569,36 @@
                         autocomplete="email"
                     >
                 </div>
-                <button type="submit" class="action-btn primary">Submit Request</button>
+
+                <div class="form-group">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input
+                        type="date"
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        required
+                        max=""
+                    >
+                    <small style="color: #999; display: block; margin-top: 5px;">
+                        We need to verify you are 18+ to comply with Australian gambling laws
+                    </small>
+                </div>
+
+                <div id="ageVerificationMessage" class="message" style="margin-bottom: 15px;"></div>
+
+                <button type="submit" class="action-btn primary" id="submitRequestBtn">Verify Age & Submit Request</button>
                 <button type="button" class="action-btn" onclick="document.getElementById('requestAccessModal').style.display='none'; document.getElementById('loginSection').style.display='block';" style="margin-top: 10px;">Back to Login</button>
             </form>
             <div class="message" id="requestMessage"></div>
+
+            <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-left: 4px solid #0ea5e9; border-radius: 4px; text-align: left; font-size: 12px;">
+                <strong>🆘 Problem Gambling Support:</strong>
+                <p style="margin: 5px 0;">
+                    <strong>National Helpline:</strong> 1300 554 427 (24/7, Free, Confidential)<br>
+                    <strong>Gamblers Anonymous:</strong> www.gamblersanonymous.org.au<br>
+                    <strong>Lifeline:</strong> 13 11 14
+                </p>
+            </div>
         </div>
 
         <!-- Access Denied -->
@@ -950,34 +983,105 @@
             document.getElementById('requestAccessModal').style.display = 'block';
         }
 
-        // Handle request access form submission
+        // Set max date for DOB (must be 18 years old minimum)
+        const today = new Date();
+        const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        document.getElementById('dateOfBirth').max = maxDate.toISOString().split('T')[0];
+
+        // Handle age verification when date of birth changes
+        document.getElementById('dateOfBirth').addEventListener('change', async (e) => {
+            const email = document.getElementById('requestEmail').value.trim();
+            const dob = e.target.value;
+            const ageMessage = document.getElementById('ageVerificationMessage');
+            const submitBtn = document.getElementById('submitRequestBtn');
+
+            if (!dob) return;
+
+            ageMessage.className = 'message';
+
+            // Calculate age
+            const birthDate = new Date(dob);
+            const today = new Date();
+            const age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            if (age < 18) {
+                ageMessage.textContent = '❌ You must be at least 18 years old to use PunterEdge.';
+                ageMessage.classList.add('error');
+                submitBtn.disabled = true;
+            } else {
+                ageMessage.textContent = '✓ Age verified! You can now submit your access request.';
+                ageMessage.classList.add('success');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Handle request access form submission with age verification
         document.getElementById('requestForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const email = document.getElementById('requestEmail').value.trim();
+            const dob = document.getElementById('dateOfBirth').value;
             const requestMessage = document.getElementById('requestMessage');
+            const submitBtn = document.getElementById('submitRequestBtn');
             requestMessage.className = 'message';
 
+            if (!dob) {
+                requestMessage.textContent = 'Please enter your date of birth';
+                requestMessage.classList.add('error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+
             try {
-                const response = await fetch('/signup', {
+                // Step 1: Verify age on backend
+                const ageResponse = await fetch('/compliance/verify-age', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, date_of_birth: dob })
+                });
+
+                const ageData = await ageResponse.json();
+
+                if (!ageData.success) {
+                    requestMessage.textContent = ageData.message || 'Age verification failed';
+                    requestMessage.classList.add('error');
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                // Step 2: Submit access request
+                const signupResponse = await fetch('/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
 
-                const data = await response.json();
+                const signupData = await signupResponse.json();
 
-                if (data.success) {
-                    requestMessage.textContent = '✓ Request submitted! An admin will review your request within 24 hours.';
+                if (signupData.success) {
+                    requestMessage.textContent = '✓ Age verified and access request submitted! An admin will review your request within 24 hours.';
                     requestMessage.classList.add('success');
                     document.getElementById('requestForm').reset();
+                    document.getElementById('ageVerificationMessage').className = 'message';
+                    setTimeout(() => {
+                        document.getElementById('requestAccessModal').style.display = 'none';
+                        document.getElementById('loginSection').style.display = 'block';
+                    }, 3000);
                 } else {
-                    requestMessage.textContent = data.message || 'Request failed';
+                    requestMessage.textContent = signupData.message || 'Request failed';
                     requestMessage.classList.add('error');
+                    submitBtn.disabled = false;
                 }
             } catch (error) {
                 requestMessage.textContent = 'Connection error. Please try again.';
                 requestMessage.classList.add('error');
+                submitBtn.disabled = false;
             }
         });
 

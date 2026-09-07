@@ -169,6 +169,36 @@ async def signup(request: LoginRequest):
     )
 
 
+@app.post("/compliance/verify-age")
+async def verify_age_endpoint(request: AgeVerificationRequest):
+    """Verify user is 18+ years old (Australian gambling requirement)"""
+    email = request.email.lower().strip()
+
+    if not is_email_valid(email):
+        return {"success": False, "message": "Invalid email format"}
+
+    if verify_age(email, request.date_of_birth):
+        return {
+            "success": True,
+            "message": "Age verified. You can now complete your account setup."
+        }
+    return {
+        "success": False,
+        "message": "You must be 18 years or older to use PunterEdge. If you believe this is an error, please contact support."
+    }
+
+
+@app.post("/compliance/check-age-verified")
+async def check_age_verified(request: LoginRequest):
+    """Check if user has completed age verification"""
+    email = request.email.lower().strip()
+    verified = is_age_verified(email)
+    return {
+        "email": email,
+        "age_verified": verified
+    }
+
+
 @app.get("/me")
 async def get_current_user_info(email: str = Header(None, alias="X-User-Email")):
     """Get current user info"""
