@@ -17,11 +17,20 @@ DATABASE_URL = os.getenv("DATABASE_URL", "")
 def get_db_connection():
     """Get PostgreSQL connection"""
     if not DATABASE_URL:
-        raise RuntimeError("DATABASE_URL environment variable not set")
-    return psycopg2.connect(DATABASE_URL)
+        logger.error("DATABASE_URL environment variable not set - outcomes unavailable")
+        return None
+    try:
+        return psycopg2.connect(DATABASE_URL)
+    except Exception as e:
+        logger.error(f"Failed to connect to database: {e}")
+        return None
 
 def init_outcomes_tables():
     """Initialize prediction outcomes tracking tables"""
+    if not DATABASE_URL:
+        logger.warning("DATABASE_URL not set - outcomes tracking disabled (use Render for PostgreSQL)")
+        return
+
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -111,6 +120,9 @@ def record_prediction_outcome(
     """Record prediction outcome after race is complete"""
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - outcome not recorded")
+            return False
         cursor = conn.cursor()
 
         # Calculate ROI
@@ -142,6 +154,8 @@ def update_performance_summary(horse_name: str, email: str = None, result: str =
     """Update horse and user performance summaries"""
     try:
         conn = get_db_connection()
+        if not conn:
+            return
         cursor = conn.cursor()
 
         # Update horse performance
