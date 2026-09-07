@@ -144,8 +144,8 @@
             <div class="prediction-row header-row">
                 <div>Horse · Race</div>
                 <div style="text-align: center;">Score</div>
-                <div style="text-align: center;">Odds</div>
-                <div style="text-align: center;">Expected Value</div>
+                <div style="text-align: center;">Best Odds</div>
+                <div style="text-align: center;">Overlay %</div>
             </div>
             <div id="content">
                 <div class="loading">
@@ -188,12 +188,12 @@
                 const html = predictions.map(p => `
                     <div class="prediction-row">
                         <div>
-                            <div class="horse-name">${p.horse_name || 'Unknown'}</div>
+                            <div class="horse-name">${p.runner_name || `Runner ${p.runner_number || 'N/A'}`}</div>
                             <div class="race-id">Race: ${p.race_id || 'N/A'}</div>
                         </div>
                         <div class="score">${Math.round(p.score)}/100</div>
-                        <div class="odds">${p.odds ? p.odds.toFixed(2) : 'N/A'}</div>
-                        <div class="odds">${p.expected_value ? p.expected_value.toFixed(2) : 'N/A'}</div>
+                        <div class="odds">${p.best_price ? p.best_price.toFixed(2) : 'N/A'}</div>
+                        <div class="odds">${p.overlay_pct ? p.overlay_pct.toFixed(1) + '%' : 'N/A'}</div>
                     </div>
                 `).join('');
 
