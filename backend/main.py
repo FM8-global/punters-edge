@@ -15,7 +15,7 @@ from auth import (
     is_user_approved, add_approved_user, remove_approved_user,
     get_approved_users, is_admin, is_email_valid, make_admin,
     remove_admin, get_all_users, request_access, get_pending_requests,
-    approve_request, reject_request, verify_admin_password, ADMIN_EMAIL
+    approve_request, reject_request, verify_admin_password, ADMIN_EMAIL, init_db
 )
 from pydantic import BaseModel
 
@@ -40,6 +40,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Database initialization on startup
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database schema on startup"""
+    try:
+        init_db()
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Database initialization failed: {e}")
+        raise
 
 # Models
 class LoginRequest(BaseModel):
