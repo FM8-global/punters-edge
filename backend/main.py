@@ -10,14 +10,14 @@ from models import Race, BetPrediction, RaceResponse
 from scoring import BetScorer
 from typing import List, Optional
 from dotenv import load_dotenv
-from auth_json import (
+from auth import (
     validate_session, create_session, logout_session,
     is_user_approved, add_approved_user, remove_approved_user,
     get_approved_users, is_admin, is_email_valid, make_admin,
     remove_admin, get_all_users, request_access, get_pending_requests,
     approve_request, reject_request, verify_admin_password, ADMIN_EMAIL, init_db
 )
-from compliance_json import (
+from compliance import (
     init_compliance_tables, verify_age, is_age_verified, is_self_excluded,
     set_betting_limits, get_betting_limits, request_self_exclusion,
     log_betting_activity, get_compliance_report, create_compliance_alert
