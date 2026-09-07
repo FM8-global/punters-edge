@@ -18,13 +18,25 @@ DATABASE_URL = os.getenv("DATABASE_URL", "")
 def get_db_connection():
     """Get PostgreSQL connection"""
     if not DATABASE_URL:
-        raise RuntimeError("DATABASE_URL environment variable not set")
-    return psycopg2.connect(DATABASE_URL)
+        logger.error("DATABASE_URL environment variable not set")
+        return None
+    try:
+        return psycopg2.connect(DATABASE_URL)
+    except Exception as e:
+        logger.error(f"Failed to connect to database: {e}")
+        return None
 
 def init_db():
     """Initialize database schema"""
+    if not DATABASE_URL:
+        logger.warning("DATABASE_URL not set - auth disabled (use Render for PostgreSQL)")
+        return
+
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.error("Cannot initialize database - connection failed")
+            raise RuntimeError("DATABASE_URL environment variable not set")
         cursor = conn.cursor()
 
         # Users table
@@ -101,6 +113,9 @@ def is_user_approved(email: str) -> bool:
     """Check if email is approved"""
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - cannot check user approval")
+            return False
         cursor = conn.cursor()
         cursor.execute("SELECT approved FROM users WHERE email = %s", (email,))
         result = cursor.fetchone()
@@ -119,6 +134,9 @@ def create_session(email: str) -> str:
 
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - session not persisted but token returned")
+            return token
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO sessions (token, email, expires) VALUES (%s, %s, %s)",
@@ -140,6 +158,9 @@ def validate_session(token: Optional[str]) -> Optional[str]:
 
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - session validation failed")
+            return None
         cursor = conn.cursor()
         cursor.execute("SELECT email, expires FROM sessions WHERE token = %s", (token,))
         result = cursor.fetchone()
@@ -233,6 +254,9 @@ def is_admin(email: str) -> bool:
     """Check if user is admin"""
     try:
         conn = get_db_connection()
+        if not conn:
+            # Allow info@fm8.global as admin fallback when DB unavailable
+            return email == ADMIN_EMAIL
         cursor = conn.cursor()
         cursor.execute("SELECT is_admin FROM users WHERE email = %s", (email,))
         result = cursor.fetchone()
@@ -394,6 +418,9 @@ def verify_admin_password(password: str) -> bool:
     """Verify admin password for info@fm8.global"""
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - cannot verify admin password")
+            return False
         cursor = conn.cursor()
         cursor.execute("SELECT password_hash FROM users WHERE email = %s", (ADMIN_EMAIL,))
         result = cursor.fetchone()

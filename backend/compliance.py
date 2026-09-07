@@ -25,13 +25,25 @@ DATABASE_URL = os.getenv("DATABASE_URL", "")
 def get_db_connection():
     """Get PostgreSQL connection"""
     if not DATABASE_URL:
-        raise RuntimeError("DATABASE_URL environment variable not set")
-    return psycopg2.connect(DATABASE_URL)
+        logger.error("DATABASE_URL environment variable not set")
+        return None
+    try:
+        return psycopg2.connect(DATABASE_URL)
+    except Exception as e:
+        logger.error(f"Failed to connect to database: {e}")
+        return None
 
 def init_compliance_tables():
     """Initialize compliance tracking tables"""
+    if not DATABASE_URL:
+        logger.warning("DATABASE_URL not set - compliance tracking disabled (use Render for PostgreSQL)")
+        return
+
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.error("Cannot initialize compliance tables - connection failed")
+            return
         cursor = conn.cursor()
 
         # Compliance/KYC data
@@ -137,7 +149,8 @@ def verify_age(email: str, date_of_birth: str) -> bool:
         if age >= 18:
             # Store verification in database
             conn = get_db_connection()
-            cursor = conn.cursor()
+            if conn:
+                cursor = conn.cursor()
             cursor.execute(
                 """INSERT INTO kyc_data (email, date_of_birth, verified_age, verification_date, verification_method)
                    VALUES (%s, %s, %s, %s, %s)
