@@ -17,6 +17,11 @@ from auth import (
     remove_admin, get_all_users, request_access, get_pending_requests,
     approve_request, reject_request, verify_admin_password, ADMIN_EMAIL, init_db
 )
+from compliance import (
+    init_compliance_tables, verify_age, is_age_verified, is_self_excluded,
+    set_betting_limits, get_betting_limits, request_self_exclusion,
+    log_betting_activity, get_compliance_report, create_compliance_alert
+)
 from pydantic import BaseModel
 
 # Load environment variables
@@ -47,7 +52,8 @@ async def startup_event():
     """Initialize database schema on startup"""
     try:
         init_db()
-        logger.info("Database initialized successfully")
+        init_compliance_tables()
+        logger.info("Database and compliance tables initialized successfully")
     except Exception as e:
         logger.error(f"Database initialization failed: {e}")
         raise
@@ -64,6 +70,21 @@ class LoginResponse(BaseModel):
 
 class UserManagement(BaseModel):
     email: str
+
+class AgeVerificationRequest(BaseModel):
+    email: str
+    date_of_birth: str
+
+class BettingLimitsRequest(BaseModel):
+    daily_limit: Optional[float] = None
+    weekly_limit: Optional[float] = None
+    monthly_limit: Optional[float] = None
+    session_minutes: Optional[int] = None
+
+class SelfExclusionRequest(BaseModel):
+    email: str
+    duration_days: int = 180
+    reason: Optional[str] = None
 
 # Helper: Get authenticated email from header
 def get_current_user(authorization: Optional[str] = Header(None)) -> str:
