@@ -150,16 +150,21 @@ def verify_age(email: str, date_of_birth: str) -> bool:
             # Store verification in database
             conn = get_db_connection()
             if conn:
-                cursor = conn.cursor()
-            cursor.execute(
-                """INSERT INTO kyc_data (email, date_of_birth, verified_age, verification_date, verification_method)
-                   VALUES (%s, %s, %s, %s, %s)
-                   ON CONFLICT (email) DO UPDATE SET verified_age = TRUE, verification_date = CURRENT_TIMESTAMP""",
-                (email, dob, True, datetime.now(), "age_verification")
-            )
-            conn.commit()
-            cursor.close()
-            conn.close()
+                try:
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        """INSERT INTO kyc_data (email, date_of_birth, verified_age, verification_date, verification_method)
+                           VALUES (%s, %s, %s, %s, %s)
+                           ON CONFLICT (email) DO UPDATE SET verified_age = TRUE, verification_date = CURRENT_TIMESTAMP""",
+                        (email, dob, True, datetime.now(), "age_verification")
+                    )
+                    conn.commit()
+                    cursor.close()
+                    conn.close()
+                except Exception as db_error:
+                    logger.error(f"Error storing age verification in database: {db_error}")
+            else:
+                logger.info(f"Database not available - age verification accepted for {email} (development mode)")
             return True
         return False
     except Exception as e:

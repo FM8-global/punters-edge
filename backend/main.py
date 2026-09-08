@@ -510,6 +510,21 @@ MANUALS = {
     "compliance": ("COMPLIANCE_GUIDE.md", "Compliance Guide"),
 }
 
+@app.get("/outcomes", response_class=HTMLResponse)
+async def outcomes_dashboard():
+    """Serve outcomes dashboard"""
+    outcomes_file = STATIC_DIR / "outcomes.html"
+    if not outcomes_file.exists():
+        raise HTTPException(status_code=404, detail="Outcomes dashboard not found")
+
+    try:
+        with open(outcomes_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        logger.error(f"Error loading outcomes dashboard: {e}")
+        raise HTTPException(status_code=500, detail="Error loading outcomes dashboard")
+
+
 @app.get("/manual/{manual_name}", response_class=HTMLResponse)
 async def get_manual(manual_name: str):
     """Serve markdown manuals as formatted HTML"""

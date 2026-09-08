@@ -344,7 +344,7 @@
     </div>
 
     <script>
-        const token = localStorage.getItem('punteredge_token');
+        const token = localStorage.getItem('punterEdgeToken');
 
         if (!token) {
             window.location.href = '/';
@@ -539,7 +539,7 @@
         }
 
         function logout() {
-            localStorage.removeItem('punteredge_token');
+            localStorage.removeItem('punterEdgeToken');
             window.location.href = '/';
         }
 
