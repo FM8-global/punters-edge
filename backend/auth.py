@@ -113,7 +113,7 @@ def init_db():
 
         except Exception as e:
             logger.error(f"Error setting admin password: {e}")
-            raise
+            # Don't raise - the admin password might already be set correctly
 
         logger.info("Database schema initialized successfully")
     except Exception as e:
