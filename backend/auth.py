@@ -79,29 +79,28 @@ def init_db():
         conn.close()
 
         # CRITICAL: Ensure admin password is set correctly
-        # This runs every startup to guarantee password works
+        # Get a fresh connection for setting the admin password
         default_password_hash = hash_password("admin123")
 
         try:
-            cursor.execute(
-                """INSERT INTO users (email, approved, is_admin, password_hash)
-                   VALUES (%s, %s, %s, %s)
-                   ON CONFLICT (email) DO UPDATE SET
-                   password_hash = %s,
-                   approved = TRUE,
-                   is_admin = TRUE""",
-                (ADMIN_EMAIL, True, True, default_password_hash, default_password_hash)
-            )
-            conn.commit()
-            logger.info(f"✅ ADMIN PASSWORD VERIFIED: {ADMIN_EMAIL}")
-
-            # Verify the password was actually set
-            cursor.execute("SELECT password_hash FROM users WHERE email = %s", (ADMIN_EMAIL,))
-            result = cursor.fetchone()
-            if result and result[0] == default_password_hash:
-                logger.info("✅ PASSWORD HASH CONFIRMED IN DATABASE")
+            conn = get_db_connection()
+            if conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """INSERT INTO users (email, approved, is_admin, password_hash)
+                       VALUES (%s, %s, %s, %s)
+                       ON CONFLICT (email) DO UPDATE SET
+                       password_hash = %s,
+                       approved = TRUE,
+                       is_admin = TRUE""",
+                    (ADMIN_EMAIL, True, True, default_password_hash, default_password_hash)
+                )
+                conn.commit()
+                cursor.close()
+                conn.close()
+                logger.info(f"✅ ADMIN PASSWORD SET: {ADMIN_EMAIL}")
             else:
-                logger.error("⚠️ PASSWORD HASH MISMATCH - CHECK DATABASE")
+                logger.warning("Could not set admin password - database connection failed")
 
         except Exception as e:
             logger.error(f"Error setting admin password: {e}")
