@@ -39,14 +39,6 @@ def init_db():
             raise RuntimeError("DATABASE_URL environment variable not set")
         cursor = conn.cursor()
 
-        # MIGRATION: Ensure password_hash column exists and admin password is set
-        try:
-            cursor.execute("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)")
-            logger.info("Added password_hash column to users table")
-        except psycopg2.Error:
-            # Column already exists, that's fine
-            pass
-
         # Users table
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
