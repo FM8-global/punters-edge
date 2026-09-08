@@ -501,6 +501,117 @@ async def adjust_score_threshold(min_overlay: float = 5.0, min_odds: float = 1.5
     }
 
 
+# Manual pages
+MANUAL_DIR = Path(__file__).parent.parent
+MANUALS = {
+    "install": ("INSTALL.md", "Installation Guide"),
+    "user": ("USER_MANUAL.md", "User Manual"),
+    "deployment": ("DEPLOYMENT.md", "Deployment Guide"),
+    "compliance": ("COMPLIANCE_GUIDE.md", "Compliance Guide"),
+}
+
+@app.get("/manual/{manual_name}", response_class=HTMLResponse)
+async def get_manual(manual_name: str):
+    """Serve markdown manuals as formatted HTML"""
+    if manual_name not in MANUALS:
+        raise HTTPException(status_code=404, detail="Manual not found")
+
+    file_path = MANUAL_DIR / MANUALS[manual_name][0]
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Manual file not found")
+
+    try:
+        import markdown
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        html_content = markdown.markdown(content, extensions=['extra', 'codehilite'])
+
+        title = MANUALS[manual_name][1]
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>PunterEdge - {title}</title>
+            <style>
+                body {{
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 900px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background: #f5f5f5;
+                }}
+                .manual-container {{
+                    background: white;
+                    padding: 40px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }}
+                h1, h2, h3 {{
+                    color: #2c3e50;
+                    border-bottom: 2px solid #3498db;
+                    padding-bottom: 10px;
+                }}
+                h1 {{ border: none; margin-top: 0; }}
+                a {{ color: #3498db; text-decoration: none; }}
+                a:hover {{ text-decoration: underline; }}
+                code {{
+                    background: #f4f4f4;
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                    font-family: 'Courier New', monospace;
+                }}
+                pre {{
+                    background: #2c3e50;
+                    color: #ecf0f1;
+                    padding: 15px;
+                    border-radius: 5px;
+                    overflow-x: auto;
+                }}
+                table {{
+                    border-collapse: collapse;
+                    width: 100%;
+                    margin: 20px 0;
+                }}
+                th, td {{
+                    border: 1px solid #ddd;
+                    padding: 12px;
+                    text-align: left;
+                }}
+                th {{
+                    background: #3498db;
+                    color: white;
+                }}
+                .back-link {{
+                    margin-bottom: 20px;
+                }}
+                .back-link a {{
+                    padding: 8px 16px;
+                    background: #3498db;
+                    color: white;
+                    border-radius: 4px;
+                    display: inline-block;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="manual-container">
+                <div class="back-link">
+                    <a href="/">← Back to App</a>
+                </div>
+                {html_content}
+            </div>
+        </body>
+        </html>
+        """
+    except Exception as e:
+        logger.error(f"Error loading manual: {e}")
+        raise HTTPException(status_code=500, detail="Error loading manual")
+
+
 # Serve static files
 STATIC_DIR = Path(__file__).parent / "static"
 STATIC_DIR.mkdir(exist_ok=True)

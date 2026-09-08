@@ -6,3 +6,4 @@ python-dotenv
 typer
 rich
 psycopg2-binary
+markdown
