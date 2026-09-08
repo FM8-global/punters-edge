@@ -15,8 +15,10 @@ ADMIN_EMAIL = "info@fm8.global"
 # Database connection from environment
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 
-# Local development fallback - in-memory session store
+# Local development fallback - in-memory storage
 _local_sessions = {}  # {token: {"email": email, "expires": datetime}}
+_local_approved_users = set()  # {email1, email2, ...}
+_local_pending_requests = {}  # {email: requested_timestamp}
 
 def get_db_connection():
     """Get PostgreSQL connection"""
@@ -131,8 +133,8 @@ def is_user_approved(email: str) -> bool:
     try:
         conn = get_db_connection()
         if not conn:
-            logger.warning("Database not available - cannot check user approval")
-            return False
+            logger.warning("Database not available - checking local approved users")
+            return email in _local_approved_users or email == ADMIN_EMAIL
         cursor = conn.cursor()
         cursor.execute("SELECT approved FROM users WHERE email = %s", (email,))
         result = cursor.fetchone()
@@ -141,7 +143,8 @@ def is_user_approved(email: str) -> bool:
         return result and result[0]
     except Exception as e:
         logger.error(f"Error checking user approval: {e}")
-        return False
+        # Development mode fallback
+        return email in _local_approved_users or email == ADMIN_EMAIL
 
 def create_session(email: str) -> str:
     """Create session token for user"""
@@ -234,6 +237,10 @@ def add_approved_user(email: str) -> bool:
 
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - storing approved user locally")
+            _local_approved_users.add(email)
+            return True
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO users (email, approved) VALUES (%s, %s) ON CONFLICT (email) DO UPDATE SET approved = TRUE",
@@ -245,7 +252,9 @@ def add_approved_user(email: str) -> bool:
         return True
     except Exception as e:
         logger.error(f"Error adding user: {e}")
-        return False
+        # Development mode fallback
+        _local_approved_users.add(email)
+        return True
 
 def remove_approved_user(email: str) -> bool:
     """Remove approved user (except admin)"""
@@ -254,6 +263,10 @@ def remove_approved_user(email: str) -> bool:
 
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - removing approved user from local store")
+            _local_approved_users.discard(email)
+            return True
         cursor = conn.cursor()
         cursor.execute("DELETE FROM users WHERE email = %s AND email != %s", (email, ADMIN_EMAIL))
         conn.commit()
@@ -262,12 +275,21 @@ def remove_approved_user(email: str) -> bool:
         return True
     except Exception as e:
         logger.error(f"Error removing user: {e}")
-        return False
+        # Development mode fallback
+        _local_approved_users.discard(email)
+        return True
 
 def get_approved_users() -> list:
     """Get all approved users"""
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - returning local approved users")
+            # Always include admin
+            result = list(_local_approved_users)
+            if ADMIN_EMAIL not in result:
+                result.append(ADMIN_EMAIL)
+            return result
         cursor = conn.cursor()
         cursor.execute("SELECT email FROM users WHERE approved = TRUE")
         results = cursor.fetchall()
@@ -276,7 +298,11 @@ def get_approved_users() -> list:
         return [row[0] for row in results]
     except Exception as e:
         logger.error(f"Error getting approved users: {e}")
-        return []
+        # Development mode fallback
+        result = list(_local_approved_users)
+        if ADMIN_EMAIL not in result:
+            result.append(ADMIN_EMAIL)
+        return result
 
 def is_admin(email: str) -> bool:
     """Check if user is admin"""
@@ -355,6 +381,16 @@ def request_access(email: str) -> bool:
 
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - storing pending request locally")
+            # Check if already approved or pending
+            if email in _local_approved_users:
+                return False
+            if email in _local_pending_requests:
+                return False
+            _local_pending_requests[email] = datetime.now()
+            return True
+
         cursor = conn.cursor()
 
         # Check if already approved or pending
@@ -380,12 +416,22 @@ def request_access(email: str) -> bool:
         return True
     except Exception as e:
         logger.error(f"Error requesting access: {e}")
+        # Development mode fallback
+        if email not in _local_approved_users and email not in _local_pending_requests:
+            _local_pending_requests[email] = datetime.now()
+            return True
         return False
 
 def get_pending_requests() -> list:
     """Get all pending access requests"""
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - returning local pending requests")
+            return [
+                {"email": email, "requested": timestamp.isoformat()}
+                for email, timestamp in _local_pending_requests.items()
+            ]
         cursor = conn.cursor()
         cursor.execute("SELECT email, requested FROM pending WHERE status = %s", ("pending",))
         results = cursor.fetchall()
@@ -398,12 +444,26 @@ def get_pending_requests() -> list:
         ]
     except Exception as e:
         logger.error(f"Error getting pending requests: {e}")
-        return []
+        # Development mode fallback
+        return [
+            {"email": email, "requested": timestamp.isoformat()}
+            for email, timestamp in _local_pending_requests.items()
+        ]
 
 def approve_request(email: str) -> bool:
     """Approve a pending access request"""
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - approving request locally")
+            # Check if pending exists
+            if email not in _local_pending_requests:
+                return False
+            # Add to approved users and remove from pending
+            add_approved_user(email)
+            _local_pending_requests.pop(email, None)
+            return True
+
         cursor = conn.cursor()
 
         # Check if pending exists
@@ -426,12 +486,21 @@ def approve_request(email: str) -> bool:
         return False
     except Exception as e:
         logger.error(f"Error approving request: {e}")
+        # Development mode fallback
+        if email in _local_pending_requests:
+            add_approved_user(email)
+            _local_pending_requests.pop(email, None)
+            return True
         return False
 
 def reject_request(email: str) -> bool:
     """Reject a pending access request"""
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - rejecting request locally")
+            _local_pending_requests.pop(email, None)
+            return True
         cursor = conn.cursor()
         cursor.execute("DELETE FROM pending WHERE email = %s", (email,))
         conn.commit()
@@ -440,7 +509,9 @@ def reject_request(email: str) -> bool:
         return True
     except Exception as e:
         logger.error(f"Error rejecting request: {e}")
-        return False
+        # Development mode fallback
+        _local_pending_requests.pop(email, None)
+        return True
 
 def verify_admin_password(password: str) -> bool:
     """Verify admin password for info@fm8.global"""
