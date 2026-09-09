@@ -259,6 +259,9 @@ def get_horse_performance(horse_name: str = None) -> Dict:
     """Get performance summary for horse(s)"""
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - returning empty horse performance")
+            return [] if not horse_name else {}
         cursor = conn.cursor()
 
         if horse_name:
@@ -306,15 +309,18 @@ def get_horse_performance(horse_name: str = None) -> Dict:
                 for row in results
             ]
 
-        return {}
+        return []
     except Exception as e:
         logger.error(f"Error getting horse performance: {e}")
-        return {}
+        return []
 
 def get_user_performance(email: str = None) -> Dict:
     """Get performance summary for user(s)"""
     try:
         conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - returning empty user performance")
+            return [] if not email else {}
         cursor = conn.cursor()
 
         if email:
@@ -364,10 +370,10 @@ def get_user_performance(email: str = None) -> Dict:
                 for row in results
             ]
 
-        return {}
+        return []
     except Exception as e:
         logger.error(f"Error getting user performance: {e}")
-        return {}
+        return []
 
 def get_outcomes_report(start_date: datetime = None, end_date: datetime = None,
                        min_score: float = None) -> Dict:
