@@ -19,6 +19,7 @@ DATABASE_URL = os.getenv("DATABASE_URL", "")
 _local_sessions = {}  # {token: {"email": email, "expires": datetime}}
 _local_approved_users = set()  # {email1, email2, ...}
 _local_pending_requests = {}  # {email: requested_timestamp}
+_local_user_passwords = {}  # {email: password_hash}
 
 def get_db_connection():
     """Get PostgreSQL connection"""
@@ -230,21 +231,30 @@ def logout_session(token: str):
     except Exception as e:
         logger.error(f"Error logging out: {e}")
 
-def add_approved_user(email: str) -> bool:
-    """Add approved user"""
+def add_approved_user(email: str, password: str = None) -> bool:
+    """Add approved user with default password"""
     if not is_email_valid(email):
         return False
+
+    # Generate default password if not provided
+    if not password:
+        import secrets
+        password = secrets.token_urlsafe(12)  # 12-char random password
+        logger.info(f"Generated default password for {email}")
+
+    password_hash = hash_password(password)
 
     try:
         conn = get_db_connection()
         if not conn:
             logger.warning("Database not available - storing approved user locally")
             _local_approved_users.add(email)
+            _local_user_passwords[email] = password_hash
             return True
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO users (email, approved) VALUES (%s, %s) ON CONFLICT (email) DO UPDATE SET approved = TRUE",
-            (email, True)
+            "INSERT INTO users (email, approved, password_hash) VALUES (%s, %s, %s) ON CONFLICT (email) DO UPDATE SET approved = TRUE, password_hash = %s",
+            (email, True, password_hash, password_hash)
         )
         conn.commit()
         cursor.close()
@@ -254,6 +264,7 @@ def add_approved_user(email: str) -> bool:
         logger.error(f"Error adding user: {e}")
         # Development mode fallback
         _local_approved_users.add(email)
+        _local_user_passwords[email] = password_hash
         return True
 
 def remove_approved_user(email: str) -> bool:
@@ -553,4 +564,56 @@ def set_admin_password(password: str) -> bool:
         return True
     except Exception as e:
         logger.error(f"Error setting admin password: {e}")
+        return False
+
+def set_user_password(email: str, password: str) -> bool:
+    """Set password for a regular user"""
+    email = email.lower().strip()
+    if not is_email_valid(email):
+        return False
+
+    password_hash = hash_password(password)
+    try:
+        conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - storing password locally")
+            _local_user_passwords[email] = password_hash
+            return True
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE users SET password_hash = %s WHERE email = %s",
+            (password_hash, email)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return True
+    except Exception as e:
+        logger.error(f"Error setting user password: {e}")
+        # Fallback to local storage
+        _local_user_passwords[email] = password_hash
+        return True
+
+def verify_user_password(email: str, password: str) -> bool:
+    """Verify password for a regular user"""
+    email = email.lower().strip()
+    try:
+        conn = get_db_connection()
+        if not conn:
+            logger.warning("Database not available - checking local passwords")
+            if email in _local_user_passwords:
+                return verify_password(password, _local_user_passwords[email])
+            return False
+        cursor = conn.cursor()
+        cursor.execute("SELECT password_hash FROM users WHERE email = %s", (email,))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if not result or not result[0]:
+            return False
+
+        return verify_password(password, result[0])
+    except Exception as e:
+        logger.error(f"Error verifying user password: {e}")
         return False

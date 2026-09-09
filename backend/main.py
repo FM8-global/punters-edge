@@ -75,6 +75,7 @@ class LoginResponse(BaseModel):
 
 class UserManagement(BaseModel):
     email: str
+    password: Optional[str] = None
 
 class AgeVerificationRequest(BaseModel):
     email: str
@@ -120,20 +121,27 @@ async def health_check():
 
 @app.post("/login", response_model=LoginResponse)
 async def login(request: LoginRequest):
-    """Login with email (and password for admin)"""
+    """Login with email and password"""
     email = request.email.lower().strip()
 
     if not is_email_valid(email):
         return LoginResponse(success=False, message="Invalid email format")
 
-    # Admin requires password
+    if not request.password:
+        return LoginResponse(success=False, message="Password required")
+
+    # Admin uses admin password
     if email == ADMIN_EMAIL:
-        if not request.password:
-            return LoginResponse(success=False, message="Password required for admin account")
         if not verify_admin_password(request.password):
-            return LoginResponse(success=False, message="Invalid admin password")
-    elif not is_user_approved(email):
-        return LoginResponse(success=False, message="Email not approved. Contact info@fm8.global")
+            return LoginResponse(success=False, message="Invalid email or password")
+    else:
+        # Regular users must be approved and have valid password
+        if not is_user_approved(email):
+            return LoginResponse(success=False, message="Email not approved. Contact info@fm8.global")
+
+        from auth import verify_user_password
+        if not verify_user_password(email, request.password):
+            return LoginResponse(success=False, message="Invalid email or password")
 
     token = create_session(email)
     return LoginResponse(
@@ -318,7 +326,7 @@ async def add_user(request: UserManagement, authorization: Optional[str] = Heade
         raise HTTPException(status_code=403, detail="Admin access required")
 
     new_email = request.email.lower().strip()
-    if add_approved_user(new_email):
+    if add_approved_user(new_email, request.password):
         return {"message": f"User {new_email} approved"}
     return {"message": "Failed to add user", "error": "Invalid email"}
 
