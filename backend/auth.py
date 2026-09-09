@@ -240,7 +240,9 @@ def add_approved_user(email: str, password: str = None) -> bool:
     if not password:
         import secrets
         password = secrets.token_urlsafe(12)  # 12-char random password
-        logger.info(f"Generated default password for {email}")
+        logger.info(f"Generated default password for {email}: {password}")
+    else:
+        logger.info(f"Using provided password for {email}")
 
     password_hash = hash_password(password)
 
@@ -601,8 +603,12 @@ def verify_user_password(email: str, password: str) -> bool:
         conn = get_db_connection()
         if not conn:
             logger.warning("Database not available - checking local passwords")
+            logger.info(f"Local users with passwords: {list(_local_user_passwords.keys())}")
             if email in _local_user_passwords:
-                return verify_password(password, _local_user_passwords[email])
+                result = verify_password(password, _local_user_passwords[email])
+                logger.info(f"Password verification for {email}: {result}")
+                return result
+            logger.warning(f"No password found for {email} in local storage")
             return False
         cursor = conn.cursor()
         cursor.execute("SELECT password_hash FROM users WHERE email = %s", (email,))

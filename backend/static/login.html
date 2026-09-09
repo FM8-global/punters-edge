@@ -686,6 +686,15 @@
                         >
                         <button class="action-btn" onclick="addNewUser()" style="margin-bottom: 0;">Add User</button>
                     </div>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <input
+                            type="password"
+                            id="newUserPassword"
+                            placeholder="Leave blank for random password"
+                            style="padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 13px;"
+                        >
+                        <button class="action-btn" onclick="clearPassword()" style="margin-bottom: 0; background: #f3f4f6; color: #666;">Clear</button>
+                    </div>
                 </div>
 
                 <!-- Approved Users Section -->
@@ -718,11 +727,11 @@
             }
         });
 
-        // Show password field for admin email
+        // Show password field for all users (password is now required for all)
         document.getElementById('email').addEventListener('input', (e) => {
             const email = e.target.value.trim().toLowerCase();
             const passwordGroup = document.getElementById('passwordGroup');
-            if (email === 'info@fm8.global') {
+            if (email) {
                 passwordGroup.style.display = 'block';
             } else {
                 passwordGroup.style.display = 'none';
@@ -897,26 +906,38 @@
 
         function addNewUser() {
             const email = document.getElementById('newUserEmail').value.trim();
+            const password = document.getElementById('newUserPassword').value.trim() || null;
+
             if (!email) {
                 alert('Please enter an email');
                 return;
             }
 
             const token = localStorage.getItem('punterEdgeToken');
+            const payload = { email };
+            if (password) {
+                payload.password = password;
+            }
+
             fetch('/admin/users/add', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email })
+                body: JSON.stringify(payload)
             }).then(r => r.json()).then(data => {
                 document.getElementById('newUserEmail').value = '';
-                alert('User added successfully!');
+                document.getElementById('newUserPassword').value = '';
+                alert('User added successfully!' + (password ? '' : ' (Random password generated)'));
                 loadUsers();
             }).catch(err => {
                 alert('Error adding user: ' + err.message);
             });
+        }
+
+        function clearPassword() {
+            document.getElementById('newUserPassword').value = '';
         }
 
         function makeAdminUser(email) {
