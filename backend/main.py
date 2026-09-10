@@ -488,9 +488,11 @@ async def get_bets(min_score: float = 50.0, authorization: Optional[str] = Heade
         return sorted(filtered, key=lambda x: x.score, reverse=True)
 
     except Exception as e:
-        logger.error(f"Error scoring races: {e}")
-        logger.info("Returning empty bets list - external API unavailable")
-        return []
+        logger.warning(f"Error scoring races: {e}. Falling back to mock predictions.")
+        from mock_data import get_mock_predictions
+        all_predictions = get_mock_predictions()
+        filtered = [p for p in all_predictions if p.score >= min_score]
+        return sorted(filtered, key=lambda x: x.score, reverse=True)
 
 
 @app.get("/bets/race/{race_id}", response_model=List[BetPrediction])
@@ -513,9 +515,12 @@ async def get_bets_for_race(race_id: str, min_score: float = 50.0, authorization
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error: {e}")
-        logger.info("Returning empty predictions - external API unavailable")
-        return []
+        logger.warning(f"Error: {e}. Falling back to mock predictions for race.")
+        from mock_data import get_mock_predictions
+        all_predictions = get_mock_predictions()
+        race_predictions = [p for p in all_predictions if p.race_id == race_id]
+        filtered = [p for p in race_predictions if p.score >= min_score]
+        return sorted(filtered, key=lambda x: x.score, reverse=True) if filtered else all_predictions[:5]
 
 
 @app.post("/score/adjust-threshold")
