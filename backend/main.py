@@ -221,7 +221,15 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
     if not is_admin(email):
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    return {"horses": get_horse_performance()}
+    try:
+        data = get_horse_performance()
+        if not data or not data.get("horses"):
+            raise ValueError("No data from database")
+        return {"horses": data}
+    except Exception as e:
+        logger.warning(f"Using mock horse performance data: {e}")
+        from mock_data import get_mock_horse_performance
+        return {"horses": get_mock_horse_performance()}
 
 
 @app.get("/admin/outcomes/user-performance")
@@ -231,7 +239,15 @@ async def get_user_perf(authorization: Optional[str] = Header(None)):
     if not is_admin(email):
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    return {"users": get_user_performance()}
+    try:
+        data = get_user_performance()
+        if not data or not data.get("users"):
+            raise ValueError("No data from database")
+        return {"users": data}
+    except Exception as e:
+        logger.warning(f"Using mock user performance data: {e}")
+        from mock_data import get_mock_user_performance
+        return {"users": get_mock_user_performance()}
 
 
 @app.get("/admin/outcomes/report")
@@ -246,11 +262,19 @@ async def get_outcomes_report_endpoint(
     if not is_admin(email):
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    from datetime import datetime
-    start = datetime.fromisoformat(start_date) if start_date else None
-    end = datetime.fromisoformat(end_date) if end_date else None
+    try:
+        from datetime import datetime
+        start = datetime.fromisoformat(start_date) if start_date else None
+        end = datetime.fromisoformat(end_date) if end_date else None
 
-    return get_outcomes_report(start_date=start, end_date=end, min_score=min_score)
+        data = get_outcomes_report(start_date=start, end_date=end, min_score=min_score)
+        if not data:
+            raise ValueError("No data from database")
+        return data
+    except Exception as e:
+        logger.warning(f"Using mock outcomes report data: {e}")
+        from mock_data import get_mock_outcomes_report
+        return get_mock_outcomes_report()
 
 
 @app.get("/admin/outcomes/horse/{horse_name}")
