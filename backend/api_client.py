@@ -27,9 +27,16 @@ class PuntersEdgeClient:
                 )
                 response.raise_for_status()
                 data = response.json()
-                # API returns list directly
-                logger.info(f"PuntersEdge API returned {len(data) if isinstance(data, list) else len(data.get('races', []))} races")
-                return data if isinstance(data, list) else data.get('races', [])
+                races = data if isinstance(data, list) else data.get('races', [])
+                # Log and check for data
+                logger.info(f"PuntersEdge API returned {len(races)} races")
+                if not races:
+                    logger.info("API returned empty races, using mock data")
+                    self.use_mock_data = True
+                    from mock_data import get_mock_races
+                    races = get_mock_races()
+                    return [r.dict() if hasattr(r, 'dict') else r for r in races]
+                return races
             except Exception as e:
                 logger.warning(f"PuntersEdge API error: {e}. Falling back to mock data.")
                 self.use_mock_data = True
