@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+asgiref
 pydantic
 httpx
 python-dotenv
