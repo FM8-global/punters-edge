@@ -462,9 +462,10 @@ async def get_races(authorization: Optional[str] = Header(None)):
         races_data = await client.get_racing_next_to_go()
         return [Race(**race) for race in races_data]
     except Exception as e:
-        logger.error(f"Error fetching races: {e}")
-        logger.info("Returning empty races list - external API unavailable")
-        return []
+        logger.warning(f"Error fetching races: {e}. Falling back to mock races.")
+        from mock_data import get_mock_races
+        mock_races = get_mock_races()
+        return [Race(**r.dict() if hasattr(r, 'dict') else r) for r in mock_races]
 
 
 @app.get("/bets", response_model=List[BetPrediction])
