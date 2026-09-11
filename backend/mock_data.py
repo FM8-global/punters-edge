@@ -101,18 +101,24 @@ def get_mock_horse_performance():
                 "horse": "Black Thunder",
                 "wins": 12,
                 "places": 24,
+                "losses": 8,
+                "win_rate": 48.0,
                 "roi": 18.5
             },
             {
                 "horse": "Silver Flash",
                 "wins": 10,
                 "places": 22,
+                "losses": 10,
+                "win_rate": 40.0,
                 "roi": 15.2
             },
             {
                 "horse": "Golden Dawn",
                 "wins": 9,
                 "places": 19,
+                "losses": 12,
+                "win_rate": 36.0,
                 "roi": 14.1
             }
         ]
