@@ -52,3 +52,4 @@ logs/
 *.db
 *.sqlite3
 data/*.csv
+# Auto-deploy with RSA SSH key - Fri Sep 11 15:46:52 EAST 2026
