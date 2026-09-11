@@ -90,8 +90,8 @@ def get_mock_horse_performance():
     """Generate mock horse performance data"""
     return [
         {
-            "horse": "Black Thunder",
-            "predictions": 44,
+            "horse_name": "Black Thunder",
+            "total_predictions": 44,
             "wins": 12,
             "places": 24,
             "losses": 8,
@@ -124,7 +124,7 @@ def get_mock_user_performance():
     return [
         {
             "email": "john.smith@example.com",
-            "predictions": 78,
+            "total_predictions": 78,
             "wins": 24,
             "places": 31,
             "losses": 23,
