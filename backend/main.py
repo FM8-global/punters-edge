@@ -34,6 +34,9 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Force bytecode recompilation on PythonAnywhere
+__version__ = "0.1.1"
+
 # Config
 api_key = os.getenv("API_KEY", "test_key")
 debug = os.getenv("DEBUG", "False") == "True"
