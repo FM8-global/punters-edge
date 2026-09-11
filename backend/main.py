@@ -229,7 +229,8 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
     except Exception as e:
         logger.warning(f"Using mock horse performance data: {e}")
         from mock_data import get_mock_horse_performance
-        return {"horses": get_mock_horse_performance()}
+        mock_data = get_mock_horse_performance()
+        return {"horses": mock_data.get("top_performers", [])}
 
 
 @app.get("/admin/outcomes/user-performance")
