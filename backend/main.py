@@ -223,9 +223,9 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
 
     try:
         data = get_horse_performance()
-        if not data or not data.get("horses"):
+        if not data or not data.get("top_performers"):
             raise ValueError("No data from database")
-        return {"horses": data}
+        return {"horses": data.get("top_performers", [])}
     except Exception as e:
         logger.warning(f"Using mock horse performance data: {e}")
         from mock_data import get_mock_horse_performance
