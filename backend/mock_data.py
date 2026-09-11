@@ -88,65 +88,71 @@ def get_mock_predictions():
 
 def get_mock_horse_performance():
     """Generate mock horse performance data"""
-    return {
-        "total_races": 245,
-        "wins": 62,
-        "places": 98,
-        "win_rate": 25.3,
-        "place_rate": 58.4,
-        "average_odds": 4.2,
-        "roi": 12.5,
-        "top_performers": [
-            {
-                "horse": "Black Thunder",
-                "wins": 12,
-                "places": 24,
-                "losses": 8,
-                "win_rate": 48.0,
-                "roi": 18.5
-            },
-            {
-                "horse": "Silver Flash",
-                "wins": 10,
-                "places": 22,
-                "losses": 10,
-                "win_rate": 40.0,
-                "roi": 15.2
-            },
-            {
-                "horse": "Golden Dawn",
-                "wins": 9,
-                "places": 19,
-                "losses": 12,
-                "win_rate": 36.0,
-                "roi": 14.1
-            }
-        ]
-    }
+    return [
+        {
+            "horse_name": "Black Thunder",
+            "total_predictions": 44,
+            "wins": 12,
+            "places": 24,
+            "losses": 8,
+            "win_rate": 27.3,
+            "avg_roi": 18.5
+        },
+        {
+            "horse_name": "Silver Flash",
+            "total_predictions": 42,
+            "wins": 10,
+            "places": 22,
+            "losses": 10,
+            "win_rate": 23.8,
+            "avg_roi": 15.2
+        },
+        {
+            "horse_name": "Golden Dawn",
+            "total_predictions": 40,
+            "wins": 9,
+            "places": 19,
+            "losses": 12,
+            "win_rate": 22.5,
+            "avg_roi": 14.1
+        }
+    ]
 
 
 def get_mock_user_performance():
     """Generate mock user performance data"""
-    return {
-        "total_bets": 156,
-        "winning_bets": 47,
-        "win_rate": 30.1,
-        "total_staked": 4650.00,
-        "total_returns": 5234.50,
-        "profit": 584.50,
-        "roi": 12.6,
-        "average_odds": 3.8,
-        "best_day": {
-            "date": "2026-09-05",
-            "profit": 245.00,
-            "bets": 8
+    return [
+        {
+            "email": "john.smith@example.com",
+            "total_predictions": 78,
+            "wins": 24,
+            "places": 31,
+            "losses": 23,
+            "win_rate": 30.8,
+            "avg_roi": 12.6,
+            "total_profit": 584.50
         },
-        "monthly_trend": [
-            {"month": "July", "profit": 125.50, "bets": 42},
-            {"month": "August", "profit": 234.25, "bets": 58},
-            {"month": "September", "profit": 225.00, "bets": 56}
-        ]
-    }
+        {
+            "email": "sarah.jones@example.com",
+            "total_predictions": 65,
+            "wins": 18,
+            "places": 28,
+            "losses": 19,
+            "win_rate": 27.7,
+            "avg_roi": 10.2,
+            "total_profit": 425.75
+        },
+        {
+            "email": "mike.wilson@example.com",
+            "total_predictions": 52,
+            "wins": 15,
+            "places": 22,
+            "losses": 15,
+            "win_rate": 28.8,
+            "avg_roi": 14.1,
+            "total_profit": 625.00
+        }
+    ]
 
 
 def get_mock_outcomes_report():

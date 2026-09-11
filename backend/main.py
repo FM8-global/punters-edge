@@ -223,14 +223,14 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
 
     try:
         data = get_horse_performance()
-        if not data or not data.get("top_performers"):
+        if not data:
             raise ValueError("No data from database")
-        return {"horses": data.get("top_performers", [])}
+        return {"horses": data}
     except Exception as e:
         logger.warning(f"Using mock horse performance data: {e}")
         from mock_data import get_mock_horse_performance
         mock_data = get_mock_horse_performance()
-        return {"horses": mock_data.get("top_performers", [])}
+        return {"horses": mock_data}
 
 
 @app.get("/admin/outcomes/user-performance")
@@ -242,13 +242,14 @@ async def get_user_perf(authorization: Optional[str] = Header(None)):
 
     try:
         data = get_user_performance()
-        if not data or not data.get("users"):
+        if not data:
             raise ValueError("No data from database")
         return {"users": data}
     except Exception as e:
         logger.warning(f"Using mock user performance data: {e}")
         from mock_data import get_mock_user_performance
-        return {"users": get_mock_user_performance()}
+        mock_data = get_mock_user_performance()
+        return {"users": mock_data}
 
 
 @app.get("/admin/outcomes/report")
