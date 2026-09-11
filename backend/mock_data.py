@@ -90,8 +90,8 @@ def get_mock_horse_performance():
     """Generate mock horse performance data"""
     return [
         {
-            "horse_name": "Black Thunder",
-            "total_predictions": 44,
+            "horse": "Black Thunder",
+            "predictions": 44,
             "wins": 12,
             "places": 24,
             "losses": 8,
@@ -99,8 +99,8 @@ def get_mock_horse_performance():
             "avg_roi": 18.5
         },
         {
-            "horse_name": "Silver Flash",
-            "total_predictions": 42,
+            "horse": "Silver Flash",
+            "predictions": 42,
             "wins": 10,
             "places": 22,
             "losses": 10,
@@ -108,8 +108,8 @@ def get_mock_horse_performance():
             "avg_roi": 15.2
         },
         {
-            "horse_name": "Golden Dawn",
-            "total_predictions": 40,
+            "horse": "Golden Dawn",
+            "predictions": 40,
             "wins": 9,
             "places": 19,
             "losses": 12,
@@ -124,7 +124,7 @@ def get_mock_user_performance():
     return [
         {
             "email": "john.smith@example.com",
-            "total_predictions": 78,
+            "predictions": 78,
             "wins": 24,
             "places": 31,
             "losses": 23,
