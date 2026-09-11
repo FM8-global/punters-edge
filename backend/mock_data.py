@@ -99,8 +99,8 @@ def get_mock_horse_performance():
             "avg_roi": 18.5
         },
         {
-            "horse": "Silver Flash",
-            "predictions": 42,
+            "horse_name": "Silver Flash",
+            "total_predictions": 42,
             "wins": 10,
             "places": 22,
             "losses": 10,
@@ -108,8 +108,8 @@ def get_mock_horse_performance():
             "avg_roi": 15.2
         },
         {
-            "horse": "Golden Dawn",
-            "predictions": 40,
+            "horse_name": "Golden Dawn",
+            "total_predictions": 40,
             "wins": 9,
             "places": 19,
             "losses": 12,
