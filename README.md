@@ -2,11 +2,31 @@
 
 Australian racing punter app with AI scoring powered by PuntersEdge odds API.
 
-**Status:** MVP Phase 1 - Manual Heuristics + Live Odds Integration
+**Status:** ✅ **Deployed & Live** | **Demo Admin:** info@fm8.global / admin123
 
 ---
 
-## 🚀 Quick Access (After Starting Backend)
+## 🚀 Live Application
+
+### **[Open PunterEdge Now](https://fm8global.pythonanywhere.com)**
+
+✅ **App:** https://fm8global.pythonanywhere.com  
+🔑 **Login:** info@fm8.global / admin123  
+📚 **Quick Start Guide:** See [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)
+
+---
+
+## 🚀 Quick Access
+
+### For Deployed App (PythonAnywhere)
+
+| Interface | URL | Use For |
+|-----------|-----|---------|
+| **PunterEdge Dashboard** | https://fm8global.pythonanywhere.com | Login & view predictions |
+| **API Docs** | https://fm8global.pythonanywhere.com/docs | Test authenticated API |
+| **Quick Start** | [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) | New user guide with live app |
+
+### For Local Development (After Starting Backend)
 
 **Backend running? Access the app here:**
 
@@ -17,7 +37,7 @@ Australian racing punter app with AI scoring powered by PuntersEdge odds API.
 | **CLI Tool** | Terminal: `python cli/main.py today-bets --api-key YOUR_KEY` | Daily reports |
 | **Health Check** | http://localhost:8000/health | Verify server running |
 
-👉 **Start here:** http://localhost:8000/docs
+👉 **For deployed app, start here:** https://fm8global.pythonanywhere.com
 
 ---
 

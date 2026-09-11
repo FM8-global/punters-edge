@@ -2,6 +2,10 @@
 
 Complete step-by-step installation for Windows, Mac, and Linux.
 
+> **Want to try the app first?** See [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) to access the live demo at **https://fm8global.pythonanywhere.com**
+
+---
+
 ## Prerequisites
 
 - **Python 3.10+** - Download from https://www.python.org/

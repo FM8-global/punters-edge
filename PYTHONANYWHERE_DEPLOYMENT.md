@@ -1,10 +1,11 @@
 # PythonAnywhere Deployment Guide - PunterEdge
 
 ## Quick Reference
-- **Your Domain:** `https://YOUR_USERNAME.pythonanywhere.com/`
-- **API Docs:** `https://YOUR_USERNAME.pythonanywhere.com/docs`
-- **Admin Login:** info@fm8.global
-- **Status:** Ready for deployment ✅
+- **🚀 Live App:** https://fm8global.pythonanywhere.com/
+- **🔑 Admin Login:** info@fm8.global / admin123
+- **📚 Quick Start:** [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)
+- **📖 API Docs:** https://fm8global.pythonanywhere.com/docs
+- **✅ Status:** Deployed & Fully Operational
 
 ---
 

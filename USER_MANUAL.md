@@ -4,7 +4,19 @@ Complete guide to using the AI horse racing betting app.
 
 ---
 
-## Quick Links (When Backend is Running)
+## 🚀 LIVE APPLICATION
+
+**[Open PunterEdge Now](https://fm8global.pythonanywhere.com)**
+
+| Link | Purpose |
+|------|---------|
+| **App:** https://fm8global.pythonanywhere.com | Main dashboard (login with info@fm8.global) |
+| **Quick Start:** [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) | Beginner's guide with screenshots |
+| **API Docs:** https://fm8global.pythonanywhere.com/docs | Interactive API documentation |
+
+---
+
+## Quick Links (When Backend is Running Locally)
 
 | Feature | Link |
 |---------|------|

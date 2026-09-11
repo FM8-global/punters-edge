@@ -1,15 +1,32 @@
 # PunterEdge - API Access Guide
 
-**Live App:** https://fm8app.pythonanywhere.com
+**🚀 Live App:** https://fm8global.pythonanywhere.com  
+**📚 New Users:** See [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) for dashboard tour  
+**🔑 Demo Admin:** info@fm8.global / admin123
 
-The app is deployed and fully functional! The web login form has a temporary limitation, but you can access everything via the API.
+---
 
-## Quick Start: Get Token & Access API
+The app is deployed and fully functional! Access via web dashboard or API.
+
+## Quick Start: Dashboard (Recommended for New Users)
+
+For easiest access, use the web dashboard:
+
+1. **Open:** https://fm8global.pythonanywhere.com
+2. **Login:** info@fm8.global / admin123
+3. **View Predictions:** Click "VIEW PREDICTIONS"
+4. **Get Token:** Click "VIEW TOKEN" to use API
+
+👉 **Full guide:** [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)
+
+---
+
+## Quick Start: API Access
 
 ### Step 1: Login (Get Token)
 
 ```bash
-curl -X POST "https://fm8app.pythonanywhere.com/login" \
+curl -X POST "https://fm8global.pythonanywhere.com/login" \
   -H "Content-Type: application/json" \
   -d '{"email":"info@fm8.global"}'
 ```
@@ -28,7 +45,7 @@ Copy the `token` value.
 ### Step 2: Get Predictions
 
 ```bash
-curl "https://fm8app.pythonanywhere.com/bets?min_score=50" \
+curl "https://fm8global.pythonanywhere.com/bets?min_score=50" \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -37,7 +54,7 @@ Returns all predictions with AI scores ≥50.
 ### Step 3: Get Races
 
 ```bash
-curl "https://fm8app.pythonanywhere.com/races" \
+curl "https://fm8global.pythonanywhere.com/races" \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
