@@ -1,7 +1,7 @@
 """Mock racing data for development and testing"""
 
 from datetime import datetime, timedelta
-from models import Race, Runner, Bookmaker, BetPrediction
+from models import Race, Runner, BookmakerOdds, BetPrediction
 import random
 
 def get_mock_races():
@@ -19,17 +19,17 @@ def get_mock_races():
                 name=f"Horse {j} {chr(65+i)}",
                 number=j,
                 bookmakers=[
-                    Bookmaker(
+                    BookmakerOdds(
                         key="neds",
                         win_price=round(random.uniform(1.5, 8.0), 2),
                         place_price=round(random.uniform(1.1, 3.0), 2)
                     ),
-                    Bookmaker(
+                    BookmakerOdds(
                         key="sportsbet",
                         win_price=round(random.uniform(1.5, 8.0), 2),
                         place_price=round(random.uniform(1.1, 3.0), 2)
                     ),
-                    Bookmaker(
+                    BookmakerOdds(
                         key="betfair",
                         win_price=round(random.uniform(1.5, 8.0), 2),
                         place_price=round(random.uniform(1.1, 3.0), 2)
