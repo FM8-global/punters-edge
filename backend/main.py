@@ -229,9 +229,10 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
         # Ensure we have valid data (list with items)
         if not isinstance(data, list) or len(data) == 0:
             raise ValueError("No valid data from database")
-        # Verify data has required fields
-        if data and not all(k in data[0] for k in ['horse_name', 'total_predictions']):
-            raise ValueError("Database data missing required fields")
+        # Verify data has required POPULATED fields
+        if data and (not all(k in data[0] for k in ['horse_name', 'total_predictions']) or
+                     not data[0].get('horse_name') or data[0].get('total_predictions') is None):
+            raise ValueError("Database data missing or incomplete required fields")
         return {"horses": data}
     except Exception as e:
         logger.warning(f"Database query failed, using mock data: {e}")
@@ -252,9 +253,10 @@ async def get_user_perf(authorization: Optional[str] = Header(None)):
         # Ensure we have valid data (list with items)
         if not isinstance(data, list) or len(data) == 0:
             raise ValueError("No valid data from database")
-        # Verify data has required fields
-        if data and not all(k in data[0] for k in ['email', 'total_predictions']):
-            raise ValueError("Database data missing required fields")
+        # Verify data has required POPULATED fields
+        if data and (not all(k in data[0] for k in ['email', 'total_predictions']) or
+                     not data[0].get('email') or data[0].get('total_predictions') is None):
+            raise ValueError("Database data missing or incomplete required fields")
         return {"users": data}
     except Exception as e:
         logger.warning(f"Database query failed, using mock data: {e}")
