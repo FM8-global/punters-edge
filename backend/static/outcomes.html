@@ -391,15 +391,17 @@
                 let html = '<table><thead><tr><th>Horse</th><th>Predictions</th><th>Wins</th><th>Places</th><th>Losses</th><th>Win Rate %</th><th>Avg ROI %</th></tr></thead><tbody>';
 
                 horses.forEach(horse => {
-                    const roi = horse.avg_roi || 0;
+                    const name = horse.horse_name || horse.horse || 'Unknown';
+                    const total = horse.total_predictions || '-';
+                    const roi = horse.avg_roi || horse.roi || 0;
                     const roiClass = roi >= 0 ? 'positive-roi' : 'negative-roi';
-                    html += `<tr onclick="showHorseDetails('${horse.horse_name}')" style="cursor:pointer;">
-                        <td><strong>${horse.horse_name}</strong></td>
-                        <td>${horse.total_predictions}</td>
+                    html += `<tr onclick="showHorseDetails('${name}')" style="cursor:pointer;">
+                        <td><strong>${name}</strong></td>
+                        <td>${total}</td>
                         <td><span class="win">${horse.wins}</span></td>
                         <td><span class="place">${horse.places}</span></td>
                         <td><span class="loss">${horse.losses}</span></td>
-                        <td>${horse.win_rate.toFixed(2)}%</td>
+                        <td>${(horse.win_rate || 0).toFixed(2)}%</td>
                         <td class="${roiClass}">${roi.toFixed(2)}%</td>
                     </tr>`;
                 });
@@ -433,14 +435,17 @@
                 users.forEach(user => {
                     const profit = user.total_profit || 0;
                     const profitClass = profit >= 0 ? 'positive-roi' : 'negative-roi';
+                    const totalPred = user.total_predictions || '-';
+                    const winRate = user.win_rate || 0;
+                    const roi = user.avg_roi || 0;
                     html += `<tr>
                         <td><strong>${user.email}</strong></td>
-                        <td>${user.total_predictions}</td>
-                        <td><span class="win">${user.wins}</span></td>
-                        <td><span class="place">${user.places}</span></td>
-                        <td><span class="loss">${user.losses}</span></td>
-                        <td>${user.win_rate.toFixed(2)}%</td>
-                        <td class="${profit >= 0 ? 'positive-roi' : 'negative-roi'}">${user.avg_roi.toFixed(2)}%</td>
+                        <td>${totalPred}</td>
+                        <td><span class="win">${user.wins || 0}</span></td>
+                        <td><span class="place">${user.places || 0}</span></td>
+                        <td><span class="loss">${user.losses || 0}</span></td>
+                        <td>${(winRate).toFixed(2)}%</td>
+                        <td class="${profit >= 0 ? 'positive-roi' : 'negative-roi'}">${(roi).toFixed(2)}%</td>
                         <td class="${profitClass}">$${profit.toFixed(2)}</td>
                     </tr>`;
                 });
