@@ -391,9 +391,10 @@
                 let html = '<table><thead><tr><th>Horse</th><th>Predictions</th><th>Wins</th><th>Places</th><th>Losses</th><th>Win Rate %</th><th>Avg ROI %</th></tr></thead><tbody>';
 
                 horses.forEach(horse => {
-                    const name = horse.horse_name || horse.horse || 'Unknown';
-                    const total = horse.total_predictions || '-';
-                    const roi = horse.avg_roi || horse.roi || 0;
+                    // Handle both old (horse, roi) and new (horse_name, avg_roi) API formats
+                    const name = String(horse.horse_name || horse.horse || 'Unknown');
+                    const total = String(horse.total_predictions !== undefined ? horse.total_predictions : (horse.predictions_count || '-'));
+                    const roi = Number(horse.avg_roi !== undefined ? horse.avg_roi : (horse.roi || 0));
                     const roiClass = roi >= 0 ? 'positive-roi' : 'negative-roi';
                     html += `<tr onclick="showHorseDetails('${name}')" style="cursor:pointer;">
                         <td><strong>${name}</strong></td>
@@ -433,11 +434,12 @@
                 let html = '<table><thead><tr><th>Email</th><th>Predictions</th><th>Wins</th><th>Places</th><th>Losses</th><th>Win Rate</th><th>Avg ROI</th><th>Total Profit</th></tr></thead><tbody>';
 
                 users.forEach(user => {
-                    const profit = user.total_profit || 0;
+                    // Handle both old and new API response formats
+                    const profit = Number(user.total_profit || user.profit || 0);
                     const profitClass = profit >= 0 ? 'positive-roi' : 'negative-roi';
-                    const totalPred = user.total_predictions || '-';
-                    const winRate = user.win_rate || 0;
-                    const roi = user.avg_roi || 0;
+                    const totalPred = String(user.total_predictions !== undefined ? user.total_predictions : (user.predictions_count || '-'));
+                    const winRate = Number(user.win_rate || 0);
+                    const roi = Number(user.avg_roi || user.roi || 0);
                     html += `<tr>
                         <td><strong>${user.email}</strong></td>
                         <td>${totalPred}</td>
