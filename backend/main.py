@@ -245,9 +245,9 @@ async def get_user_perf(authorization: Optional[str] = Header(None)):
 
     try:
         data = get_user_performance()
-        if not data:
+        if not data or (isinstance(data, list) and len(data) == 0):
             raise ValueError("No data from database")
-        return {"users": data}
+        return {"users": data if isinstance(data, list) else []}
     except Exception as e:
         logger.warning(f"Using mock user performance data: {e}")
         from mock_data import get_mock_user_performance
