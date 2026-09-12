@@ -226,11 +226,15 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
 
     try:
         data = get_horse_performance()
-        if not data:
-            raise ValueError("No data from database")
+        # Ensure we have valid data (list with items)
+        if not isinstance(data, list) or len(data) == 0:
+            raise ValueError("No valid data from database")
+        # Verify data has required fields
+        if data and not all(k in data[0] for k in ['horse_name', 'total_predictions']):
+            raise ValueError("Database data missing required fields")
         return {"horses": data}
     except Exception as e:
-        logger.warning(f"Using mock horse performance data: {e}")
+        logger.warning(f"Database query failed, using mock data: {e}")
         from mock_data import get_mock_horse_performance
         mock_data = get_mock_horse_performance()
         return {"horses": mock_data}
@@ -245,11 +249,15 @@ async def get_user_perf(authorization: Optional[str] = Header(None)):
 
     try:
         data = get_user_performance()
-        if not data:
-            raise ValueError("No data from database")
+        # Ensure we have valid data (list with items)
+        if not isinstance(data, list) or len(data) == 0:
+            raise ValueError("No valid data from database")
+        # Verify data has required fields
+        if data and not all(k in data[0] for k in ['email', 'total_predictions']):
+            raise ValueError("Database data missing required fields")
         return {"users": data}
     except Exception as e:
-        logger.warning(f"Using mock user performance data: {e}")
+        logger.warning(f"Database query failed, using mock data: {e}")
         from mock_data import get_mock_user_performance
         mock_data = get_mock_user_performance()
         return {"users": mock_data}
