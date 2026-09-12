@@ -225,12 +225,15 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
         raise HTTPException(status_code=403, detail="Admin access required")
 
     try:
+        import importlib
+        import mock_data as md
+        importlib.reload(md)
+
         data = get_horse_performance()
         # Use mock data if database returns empty or incomplete data
         if not isinstance(data, list) or len(data) == 0:
             logger.warning("Database returned empty horse performance data, using mock")
-            from mock_data import get_mock_horse_performance
-            return {"horses": get_mock_horse_performance()}
+            return {"horses": md.get_mock_horse_performance()}
 
         # Check if first record has all required fields populated
         first_record = data[0]
@@ -240,14 +243,15 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
 
         if missing_or_empty:
             logger.warning(f"Database record missing fields {missing_or_empty}, using mock data")
-            from mock_data import get_mock_horse_performance
-            return {"horses": get_mock_horse_performance()}
+            return {"horses": md.get_mock_horse_performance()}
 
         return {"horses": data}
     except Exception as e:
         logger.warning(f"Database query failed ({e}), using mock data")
-        from mock_data import get_mock_horse_performance
-        return {"horses": get_mock_horse_performance()}
+        import importlib
+        import mock_data as md
+        importlib.reload(md)
+        return {"horses": md.get_mock_horse_performance()}
 
 
 @app.get("/admin/outcomes/user-performance")
@@ -258,12 +262,15 @@ async def get_user_perf(authorization: Optional[str] = Header(None)):
         raise HTTPException(status_code=403, detail="Admin access required")
 
     try:
+        import importlib
+        import mock_data as md
+        importlib.reload(md)
+
         data = get_user_performance()
         # Use mock data if database returns empty or incomplete data
         if not isinstance(data, list) or len(data) == 0:
             logger.warning("Database returned empty user performance data, using mock")
-            from mock_data import get_mock_user_performance
-            return {"users": get_mock_user_performance()}
+            return {"users": md.get_mock_user_performance()}
 
         # Check if first record has all required fields populated
         first_record = data[0]
@@ -273,14 +280,15 @@ async def get_user_perf(authorization: Optional[str] = Header(None)):
 
         if missing_or_empty:
             logger.warning(f"Database record missing fields {missing_or_empty}, using mock data")
-            from mock_data import get_mock_user_performance
-            return {"users": get_mock_user_performance()}
+            return {"users": md.get_mock_user_performance()}
 
         return {"users": data}
     except Exception as e:
         logger.warning(f"Database query failed ({e}), using mock data")
-        from mock_data import get_mock_user_performance
-        return {"users": get_mock_user_performance()}
+        import importlib
+        import mock_data as md
+        importlib.reload(md)
+        return {"users": md.get_mock_user_performance()}
 
 
 @app.get("/admin/outcomes/report")
