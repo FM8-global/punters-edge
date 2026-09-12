@@ -224,8 +224,11 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
     if not is_admin(email):
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    from mock_data import get_mock_horse_performance
-    return {"horses": get_mock_horse_performance()}
+    return {"horses": [
+        {"horse_name": "Black Thunder", "total_predictions": 44, "wins": 12, "places": 24, "losses": 8, "win_rate": 27.3, "avg_roi": 18.5},
+        {"horse_name": "Silver Flash", "total_predictions": 42, "wins": 10, "places": 22, "losses": 10, "win_rate": 23.8, "avg_roi": 15.2},
+        {"horse_name": "Golden Dawn", "total_predictions": 40, "wins": 9, "places": 19, "losses": 12, "win_rate": 22.5, "avg_roi": 14.1}
+    ]}
 
 
 @app.get("/admin/outcomes/user-performance")
@@ -235,8 +238,11 @@ async def get_user_perf(authorization: Optional[str] = Header(None)):
     if not is_admin(email):
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    from mock_data import get_mock_user_performance
-    return {"users": get_mock_user_performance()}
+    return {"users": [
+        {"email": "john.smith@example.com", "total_predictions": 78, "wins": 24, "places": 31, "losses": 23, "win_rate": 30.8, "avg_roi": 12.6, "total_profit": 584.50},
+        {"email": "sarah.jones@example.com", "total_predictions": 65, "wins": 18, "places": 28, "losses": 19, "win_rate": 27.7, "avg_roi": 10.2, "total_profit": 425.75},
+        {"email": "mike.wilson@example.com", "total_predictions": 52, "wins": 15, "places": 22, "losses": 15, "win_rate": 28.8, "avg_roi": 14.1, "total_profit": 625.00}
+    ]}
 
 
 @app.get("/admin/outcomes/report")
