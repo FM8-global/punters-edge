@@ -225,7 +225,20 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
         raise HTTPException(status_code=403, detail="Admin access required")
 
     data = get_horse_performance()
-    return {"horses": data if data else []}
+    # Normalize field names for frontend compatibility
+    normalized = []
+    for horse in (data if data else []):
+        if isinstance(horse, dict):
+            normalized.append({
+                "horse_name": horse.get("horse_name") or horse.get("horse") or "Unknown",
+                "total_predictions": horse.get("total_predictions", "-"),
+                "wins": horse.get("wins", 0),
+                "places": horse.get("places", 0),
+                "losses": horse.get("losses", 0),
+                "win_rate": horse.get("win_rate", 0),
+                "avg_roi": horse.get("avg_roi") or horse.get("roi", 0)
+            })
+    return {"horses": normalized}
 
 
 @app.get("/admin/outcomes/user-performance")
@@ -236,7 +249,21 @@ async def get_user_perf(authorization: Optional[str] = Header(None)):
         raise HTTPException(status_code=403, detail="Admin access required")
 
     data = get_user_performance()
-    return {"users": data if data else []}
+    # Normalize field names for frontend compatibility
+    normalized = []
+    for user in (data if data else []):
+        if isinstance(user, dict):
+            normalized.append({
+                "email": user.get("email", "Unknown"),
+                "total_predictions": user.get("total_predictions", 0),
+                "wins": user.get("wins", 0),
+                "places": user.get("places", 0),
+                "losses": user.get("losses", 0),
+                "win_rate": user.get("win_rate", 0),
+                "avg_roi": user.get("avg_roi", 0),
+                "total_profit": user.get("total_profit", 0)
+            })
+    return {"users": normalized}
 
 
 @app.get("/admin/outcomes/report")
