@@ -68,17 +68,20 @@ def get_mock_predictions():
     for race in races:
         for runner in race.runners:
             if random.random() > 0.3:  # 70% of runners get predictions
+                best_price = round(random.uniform(1.5, 6.0), 2)
+                avg_price = round(random.uniform(1.5, 6.0), 2)
                 prediction = BetPrediction(
                     race_id=race.race_id,
+                    race_venue=race.venue,
+                    race_number=race.race_number,
                     runner_name=runner.name,
                     runner_number=runner.number,
-                    venue=race.venue,
-                    start_time=race.start_time,
+                    best_price=best_price,
+                    avg_price=avg_price,
+                    overlay_pct=round(random.uniform(0, 30), 1),
                     score=round(random.uniform(50, 95), 1),
-                    predicted_odds=round(random.uniform(1.5, 6.0), 2),
-                    best_available_odds=round(random.uniform(1.5, 6.0), 2),
-                    recommended_bookmaker="neds",
-                    confidence_level=random.choice(["High", "Medium", "Low"]),
+                    category=race.category,
+                    start_time=race.start_time,
                     reasoning=f"Mock prediction for {runner.name} in {race.race_name}"
                 )
                 predictions.append(prediction)
