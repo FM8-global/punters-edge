@@ -487,27 +487,27 @@
                 let statsHtml = `
                     <div class="stat-card">
                         <div class="label">Total Predictions</div>
-                        <div class="value">${data.total_predictions}</div>
+                        <div class="value">${data.total_predictions || 0}</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Wins</div>
-                        <div class="value" style="color: #27ae60;">${data.wins}</div>
+                        <div class="value" style="color: #27ae60;">${data.wins || 0}</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Places</div>
-                        <div class="value" style="color: #f39c12;">${data.places}</div>
+                        <div class="value" style="color: #f39c12;">${data.places || 0}</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Losses</div>
-                        <div class="value" style="color: #e74c3c;">${data.losses}</div>
+                        <div class="value" style="color: #e74c3c;">${data.losses || 0}</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Win Rate</div>
-                        <div class="value">${data.win_rate.toFixed(2)}%</div>
+                        <div class="value">${(data.win_rate || 0).toFixed(2)}%</div>
                     </div>
                     <div class="stat-card">
                         <div class="label">Avg ROI</div>
-                        <div class="value">${data.avg_roi.toFixed(2)}%</div>
+                        <div class="value">${(data.avg_roi || 0).toFixed(2)}%</div>
                     </div>
                 `;
                 statsContainer.innerHTML = statsHtml;
@@ -529,12 +529,12 @@
                     html += `<tr>
                         <td><strong>${outcome.race_id}</strong><br><small style="color:#999;">Race ${raceNum}</small></td>
                         <td><strong>${track}</strong></td>
-                        <td>${outcome.horse_name}</td>
-                        <td>${outcome.predicted_score.toFixed(2)}</td>
-                        <td>${outcome.predicted_odds ? outcome.predicted_odds.toFixed(2) : '—'}</td>
-                        <td><span class="${resultClass}">${outcome.actual_result.toUpperCase()}</span></td>
-                        <td class="${roiClass}">${roi.toFixed(2)}%</td>
-                        <td>${new Date(outcome.prediction_date).toLocaleDateString()}</td>
+                        <td>${outcome.horse_name || 'Unknown'}</td>
+                        <td>${(outcome.predicted_score || 0).toFixed(2)}</td>
+                        <td>${outcome.predicted_odds ? Number(outcome.predicted_odds).toFixed(2) : '—'}</td>
+                        <td><span class="${resultClass}">${(outcome.actual_result || 'loss').toUpperCase()}</span></td>
+                        <td class="${roiClass}">${Number(roi).toFixed(2)}%</td>
+                        <td>${outcome.prediction_date ? new Date(outcome.prediction_date).toLocaleDateString() : '—'}</td>
                     </tr>`;
                 });
 
@@ -587,11 +587,11 @@
                         <td>${outcome.race_id}</td>
                         <td><strong>${track}</strong></td>
                         <td>${raceNum}</td>
-                        <td>${outcome.predicted_score.toFixed(2)}</td>
-                        <td>${outcome.predicted_odds ? outcome.predicted_odds.toFixed(2) : '—'}</td>
-                        <td><span class="${resultClass}">${outcome.actual_result.toUpperCase()}</span></td>
-                        <td class="${roiClass}">${roi.toFixed(2)}%</td>
-                        <td>${new Date(outcome.prediction_date).toLocaleDateString()}</td>
+                        <td>${(outcome.predicted_score || 0).toFixed(2)}</td>
+                        <td>${outcome.predicted_odds ? Number(outcome.predicted_odds).toFixed(2) : '—'}</td>
+                        <td><span class="${resultClass}">${(outcome.actual_result || 'loss').toUpperCase()}</span></td>
+                        <td class="${roiClass}">${Number(roi).toFixed(2)}%</td>
+                        <td>${outcome.prediction_date ? new Date(outcome.prediction_date).toLocaleDateString() : '—'}</td>
                     </tr>`;
                 });
 
