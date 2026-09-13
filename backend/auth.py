@@ -463,19 +463,23 @@ def get_pending_requests() -> list:
             for email, timestamp in _local_pending_requests.items()
         ]
 
-def approve_request(email: str) -> bool:
-    """Approve a pending access request"""
+def approve_request(email: str) -> tuple:
+    """Approve a pending access request and return generated password"""
     try:
+        import secrets
+        # Generate temporary password
+        temp_password = secrets.token_urlsafe(12)
+
         conn = get_db_connection()
         if not conn:
             logger.warning("Database not available - approving request locally")
             # Check if pending exists
             if email not in _local_pending_requests:
-                return False
-            # Add to approved users and remove from pending
-            add_approved_user(email)
+                return False, None
+            # Add to approved users with password and remove from pending
+            add_approved_user(email, temp_password)
             _local_pending_requests.pop(email, None)
-            return True
+            return True, temp_password
 
         cursor = conn.cursor()
 
@@ -484,15 +488,15 @@ def approve_request(email: str) -> bool:
         if not cursor.fetchone():
             cursor.close()
             conn.close()
-            return False
+            return False, None
 
-        # Add to approved users
-        if add_approved_user(email):
+        # Add to approved users with temporary password
+        if add_approved_user(email, temp_password):
             cursor.execute("DELETE FROM pending WHERE email = %s", (email,))
             conn.commit()
             cursor.close()
             conn.close()
-            return True
+            return True, temp_password
 
         cursor.close()
         conn.close()

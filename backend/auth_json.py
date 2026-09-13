@@ -286,23 +286,29 @@ def get_pending_requests() -> list:
         logger.error(f"Error getting pending requests: {e}")
         return []
 
-def approve_request(email: str) -> bool:
-    """Approve a pending access request"""
+def approve_request(email: str) -> tuple:
+    """Approve a pending access request and return generated password"""
     try:
+        import secrets
+        # Generate temporary password
+        temp_password = secrets.token_urlsafe(12)
+
         pending = load_json_file(PENDING_FILE)
 
         if email not in pending:
-            return False
+            return False, None
 
-        # Add to approved users
-        if add_approved_user(email):
+        # Add to approved users with password
+        if add_approved_user(email, temp_password):
             del pending[email]
-            return save_json_file(PENDING_FILE, pending)
+            if save_json_file(PENDING_FILE, pending):
+                return True, temp_password
+            return False, None
 
-        return False
+        return False, None
     except Exception as e:
         logger.error(f"Error approving request: {e}")
-        return False
+        return False, None
 
 def reject_request(email: str) -> bool:
     """Reject a pending access request"""

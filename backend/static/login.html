@@ -929,7 +929,26 @@
             }).then(r => r.json()).then(data => {
                 document.getElementById('newUserEmail').value = '';
                 document.getElementById('newUserPassword').value = '';
-                alert('User added successfully!' + (password ? '' : ' (Random password generated)'));
+
+                if (data.success && data.password) {
+                    const message = `✅ User ${email} added successfully\n\n` +
+                        (data.password_generated ?
+                            `Temporary Password: ${data.password}\n\n` +
+                            `Instructions:\n` +
+                            `1. Share this password with the user\n` +
+                            `2. User logs in with email and this password\n` +
+                            `3. User should change password on first login\n\n` +
+                            `(Password copied - you can paste it)`
+                        :
+                            `Password: ${data.password}\n\n(User provided password)`
+                        );
+
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(data.password).catch(() => {});
+                    alert(message);
+                } else {
+                    alert('User added successfully!');
+                }
                 loadUsers();
             }).catch(err => {
                 alert('Error adding user: ' + err.message);
@@ -1188,7 +1207,21 @@
                 },
                 body: JSON.stringify({ email })
             }).then(r => r.json()).then(data => {
-                alert('Access approved! User can now log in.');
+                if (data.success && data.temporary_password) {
+                    const message = `✅ Access approved for ${email}\n\n` +
+                        `Temporary Password: ${data.temporary_password}\n\n` +
+                        `Instructions to share with user:\n` +
+                        `1. Share the temporary password above\n` +
+                        `2. User logs in with their email and this password\n` +
+                        `3. User should change their password on first login\n\n` +
+                        `(Password copied - you can paste it in your message)`;
+
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(data.temporary_password).catch(() => {});
+                    alert(message);
+                } else {
+                    alert('Access approved! User can now log in.');
+                }
                 loadPendingRequests();
                 loadUsers();
             }).catch(err => {

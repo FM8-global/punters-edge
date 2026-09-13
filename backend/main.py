@@ -368,9 +368,23 @@ async def add_user(request: UserManagement, authorization: Optional[str] = Heade
         raise HTTPException(status_code=403, detail="Admin access required")
 
     new_email = request.email.lower().strip()
-    if add_approved_user(new_email, request.password):
-        return {"message": f"User {new_email} approved"}
-    return {"message": "Failed to add user", "error": "Invalid email"}
+
+    # Generate password if not provided
+    if not request.password:
+        import secrets
+        generated_password = secrets.token_urlsafe(12)
+    else:
+        generated_password = request.password
+
+    if add_approved_user(new_email, generated_password):
+        return {
+            "success": True,
+            "message": f"User {new_email} added successfully",
+            "email": new_email,
+            "password": generated_password,
+            "password_generated": not request.password
+        }
+    return {"success": False, "message": "Failed to add user", "error": "Invalid email"}
 
 
 @app.post("/admin/users/remove")
@@ -451,9 +465,16 @@ async def approve_pending_request(request: UserManagement, authorization: Option
         raise HTTPException(status_code=403, detail="Admin access required")
 
     user_email = request.email.lower().strip()
-    if approve_request(user_email):
-        return {"message": f"Access approved for {user_email}"}
-    return {"message": "Failed to approve request", "error": "Request not found"}
+    success, temp_password = approve_request(user_email)
+    if success:
+        return {
+            "success": True,
+            "message": f"Access approved for {user_email}",
+            "email": user_email,
+            "temporary_password": temp_password,
+            "instructions": f"Share this temporary password with the user: {temp_password}. They should change it on first login."
+        }
+    return {"success": False, "message": "Failed to approve request", "error": "Request not found"}
 
 
 @app.post("/admin/pending/reject")
