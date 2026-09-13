@@ -1,0 +1,175 @@
+
+============================================================
+STARTING E2E TEST SUITE
+============================================================
+
+✓ WebDriver initialized (headless=False)
+✓ T0: Page Loads: PASS 
+✗ T1: Admin Login: FAIL Message: element not interactable
+  (Session info: chrome=152.0.7977.83); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementnotinteractableexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff67da1e035+5745]
+	chromedriver!(No symbol) [0x7ff67d946a90]
+	chromedriver!(No symbol) [0x7ff67d775b66]
+	chromedriver!(No symbol) [0x7ff67d7d2244]
+	chromedriver!(No symbol) [0x7ff67d7c4d88]
+	chromedriver!(No symbol) [0x7ff67d7f95ca]
+	chromedriver!(No symbol) [0x7ff67d7c4606]
+	chromedriver!(No symbol) [0x7ff67d81e502]
+	chromedriver!(No symbol) [0x7ff67d7c2e4b]
+	chromedriver!(No symbol) [0x7ff67d7c3d83]
+	chromedriver!GetHandleVerifier [0x7ff67de32f8b+41a69b]
+	chromedriver!GetHandleVerifier [0x7ff67de60132+447842]
+	chromedriver!GetHandleVerifier [0x7ff67de53e7e+43b58e]
+	chromedriver!GetHandleVerifier [0x7ff67db13f5e+fb66e]
+	chromedriver!(No symbol) [0x7ff67d95419c]
+	chromedriver!(No symbol) [0x7ff67d94fdd4]
+	chromedriver!(No symbol) [0x7ff67d94ff64]
+	chromedriver!(No symbol) [0x7ff67d93a91c]
+	KERNEL32!BaseThreadInitThunk [0x7ffa02717374+14]
+	ntdll!RtlUserThreadStart [0x7ffa0285cc91+21]
+
+✗ T2: Session Persistence: FAIL No token before reload
+✓ T3: Dashboard Loads: PASS 
+✗ T4: Predictions Section: FAIL 'WebElement' object has no attribute 'scroll_into_view'
+✗ T5: Outcomes Section: FAIL 'WebElement' object has no attribute 'scroll_into_view'
+✗ T6: Console Errors: FAIL Found 1 errors: ['http://localhost:8000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)']
+✓ T9: Page Responsive: PASS 
+✗ T7: Logout Clears Session: FAIL Message: element not interactable
+  (Session info: chrome=152.0.7977.83); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementnotinteractableexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff67da1e035+5745]
+	chromedriver!(No symbol) [0x7ff67d946a90]
+	chromedriver!(No symbol) [0x7ff67d775b66]
+	chromedriver!(No symbol) [0x7ff67d7d2244]
+	chromedriver!(No symbol) [0x7ff67d7c4d88]
+	chromedriver!(No symbol) [0x7ff67d7f95ca]
+	chromedriver!(No symbol) [0x7ff67d7c4606]
+	chromedriver!(No symbol) [0x7ff67d81e502]
+	chromedriver!(No symbol) [0x7ff67d7c2e4b]
+	chromedriver!(No symbol) [0x7ff67d7c3d83]
+	chromedriver!GetHandleVerifier [0x7ff67de32f8b+41a69b]
+	chromedriver!GetHandleVerifier [0x7ff67de60132+447842]
+	chromedriver!GetHandleVerifier [0x7ff67de53e7e+43b58e]
+	chromedriver!GetHandleVerifier [0x7ff67db13f5e+fb66e]
+	chromedriver!(No symbol) [0x7ff67d95419c]
+	chromedriver!(No symbol) [0x7ff67d94fdd4]
+	chromedriver!(No symbol) [0x7ff67d94ff64]
+	chromedriver!(No symbol) [0x7ff67d93a91c]
+	KERNEL32!BaseThreadInitThunk [0x7ffa02717374+14]
+	ntdll!RtlUserThreadStart [0x7ffa0285cc91+21]
+
+✗ T8: Invalid Credentials Rejected: FAIL Message: element not interactable
+  (Session info: chrome=152.0.7977.83); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementnotinteractableexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff67da1e035+5745]
+	chromedriver!(No symbol) [0x7ff67d946a90]
+	chromedriver!(No symbol) [0x7ff67d775b66]
+	chromedriver!(No symbol) [0x7ff67d7d2244]
+	chromedriver!(No symbol) [0x7ff67d7c4d88]
+	chromedriver!(No symbol) [0x7ff67d7f95ca]
+	chromedriver!(No symbol) [0x7ff67d7c4606]
+	chromedriver!(No symbol) [0x7ff67d81e502]
+	chromedriver!(No symbol) [0x7ff67d7c2e4b]
+	chromedriver!(No symbol) [0x7ff67d7c3d83]
+	chromedriver!GetHandleVerifier [0x7ff67de32f8b+41a69b]
+	chromedriver!GetHandleVerifier [0x7ff67de60132+447842]
+	chromedriver!GetHandleVerifier [0x7ff67de53e7e+43b58e]
+	chromedriver!GetHandleVerifier [0x7ff67db13f5e+fb66e]
+	chromedriver!(No symbol) [0x7ff67d95419c]
+	chromedriver!(No symbol) [0x7ff67d94fdd4]
+	chromedriver!(No symbol) [0x7ff67d94ff64]
+	chromedriver!(No symbol) [0x7ff67d93a91c]
+	KERNEL32!BaseThreadInitThunk [0x7ffa02717374+14]
+	ntdll!RtlUserThreadStart [0x7ffa0285cc91+21]
+
+✓ WebDriver closed
+
+============================================================
+TEST SUMMARY
+============================================================
+
+Total Tests: 10
+✓ Passed: 3
+✗ Failed: 7
+Pass Rate: 30.0%
+
+Failed Tests:
+  ✗ T1: Admin Login: Message: element not interactable
+  (Session info: chrome=152.0.7977.83); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementnotinteractableexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff67da1e035+5745]
+	chromedriver!(No symbol) [0x7ff67d946a90]
+	chromedriver!(No symbol) [0x7ff67d775b66]
+	chromedriver!(No symbol) [0x7ff67d7d2244]
+	chromedriver!(No symbol) [0x7ff67d7c4d88]
+	chromedriver!(No symbol) [0x7ff67d7f95ca]
+	chromedriver!(No symbol) [0x7ff67d7c4606]
+	chromedriver!(No symbol) [0x7ff67d81e502]
+	chromedriver!(No symbol) [0x7ff67d7c2e4b]
+	chromedriver!(No symbol) [0x7ff67d7c3d83]
+	chromedriver!GetHandleVerifier [0x7ff67de32f8b+41a69b]
+	chromedriver!GetHandleVerifier [0x7ff67de60132+447842]
+	chromedriver!GetHandleVerifier [0x7ff67de53e7e+43b58e]
+	chromedriver!GetHandleVerifier [0x7ff67db13f5e+fb66e]
+	chromedriver!(No symbol) [0x7ff67d95419c]
+	chromedriver!(No symbol) [0x7ff67d94fdd4]
+	chromedriver!(No symbol) [0x7ff67d94ff64]
+	chromedriver!(No symbol) [0x7ff67d93a91c]
+	KERNEL32!BaseThreadInitThunk [0x7ffa02717374+14]
+	ntdll!RtlUserThreadStart [0x7ffa0285cc91+21]
+
+  ✗ T2: Session Persistence: No token before reload
+  ✗ T4: Predictions Section: 'WebElement' object has no attribute 'scroll_into_view'
+  ✗ T5: Outcomes Section: 'WebElement' object has no attribute 'scroll_into_view'
+  ✗ T6: Console Errors: Found 1 errors: ['http://localhost:8000/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)']
+  ✗ T7: Logout Clears Session: Message: element not interactable
+  (Session info: chrome=152.0.7977.83); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementnotinteractableexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff67da1e035+5745]
+	chromedriver!(No symbol) [0x7ff67d946a90]
+	chromedriver!(No symbol) [0x7ff67d775b66]
+	chromedriver!(No symbol) [0x7ff67d7d2244]
+	chromedriver!(No symbol) [0x7ff67d7c4d88]
+	chromedriver!(No symbol) [0x7ff67d7f95ca]
+	chromedriver!(No symbol) [0x7ff67d7c4606]
+	chromedriver!(No symbol) [0x7ff67d81e502]
+	chromedriver!(No symbol) [0x7ff67d7c2e4b]
+	chromedriver!(No symbol) [0x7ff67d7c3d83]
+	chromedriver!GetHandleVerifier [0x7ff67de32f8b+41a69b]
+	chromedriver!GetHandleVerifier [0x7ff67de60132+447842]
+	chromedriver!GetHandleVerifier [0x7ff67de53e7e+43b58e]
+	chromedriver!GetHandleVerifier [0x7ff67db13f5e+fb66e]
+	chromedriver!(No symbol) [0x7ff67d95419c]
+	chromedriver!(No symbol) [0x7ff67d94fdd4]
+	chromedriver!(No symbol) [0x7ff67d94ff64]
+	chromedriver!(No symbol) [0x7ff67d93a91c]
+	KERNEL32!BaseThreadInitThunk [0x7ffa02717374+14]
+	ntdll!RtlUserThreadStart [0x7ffa0285cc91+21]
+
+  ✗ T8: Invalid Credentials Rejected: Message: element not interactable
+  (Session info: chrome=152.0.7977.83); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementnotinteractableexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff67da1e035+5745]
+	chromedriver!(No symbol) [0x7ff67d946a90]
+	chromedriver!(No symbol) [0x7ff67d775b66]
+	chromedriver!(No symbol) [0x7ff67d7d2244]
+	chromedriver!(No symbol) [0x7ff67d7c4d88]
+	chromedriver!(No symbol) [0x7ff67d7f95ca]
+	chromedriver!(No symbol) [0x7ff67d7c4606]
+	chromedriver!(No symbol) [0x7ff67d81e502]
+	chromedriver!(No symbol) [0x7ff67d7c2e4b]
+	chromedriver!(No symbol) [0x7ff67d7c3d83]
+	chromedriver!GetHandleVerifier [0x7ff67de32f8b+41a69b]
+	chromedriver!GetHandleVerifier [0x7ff67de60132+447842]
+	chromedriver!GetHandleVerifier [0x7ff67de53e7e+43b58e]
+	chromedriver!GetHandleVerifier [0x7ff67db13f5e+fb66e]
+	chromedriver!(No symbol) [0x7ff67d95419c]
+	chromedriver!(No symbol) [0x7ff67d94fdd4]
+	chromedriver!(No symbol) [0x7ff67d94ff64]
+	chromedriver!(No symbol) [0x7ff67d93a91c]
+	KERNEL32!BaseThreadInitThunk [0x7ffa02717374+14]
+	ntdll!RtlUserThreadStart [0x7ffa0285cc91+21]
+
+
+============================================================

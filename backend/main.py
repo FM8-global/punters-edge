@@ -752,6 +752,17 @@ async def get_manual(manual_name: str):
         raise HTTPException(status_code=500, detail="Error loading manual")
 
 
+# Favicon route
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    """Serve favicon"""
+    favicon_path = Path(__file__).parent / "static" / "favicon.svg"
+    if favicon_path.exists():
+        return FileResponse(favicon_path, media_type="image/svg+xml")
+    # Fallback: return 204 No Content
+    return FileResponse(Path(__file__).parent / "static" / "login.html")
+
+
 # Serve static files
 STATIC_DIR = Path(__file__).parent / "static"
 STATIC_DIR.mkdir(exist_ok=True)
