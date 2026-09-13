@@ -1208,13 +1208,18 @@
                 body: JSON.stringify({ email })
             }).then(r => r.json()).then(data => {
                 if (data.success && data.temporary_password) {
+                    const emailStatus = data.email_sent ?
+                        `\n✅ Approval email has been sent to ${email}` :
+                        `\n⚠️ Email notification could not be sent (not configured). Please share the password below with the user.`;
+
                     const message = `✅ Access approved for ${email}\n\n` +
                         `Temporary Password: ${data.temporary_password}\n\n` +
                         `Instructions to share with user:\n` +
                         `1. Share the temporary password above\n` +
                         `2. User logs in with their email and this password\n` +
-                        `3. User should change their password on first login\n\n` +
-                        `(Password copied - you can paste it in your message)`;
+                        `3. User should change their password on first login\n` +
+                        emailStatus +
+                        `\n\n(Password copied - you can paste it in your message)`;
 
                     // Copy to clipboard
                     navigator.clipboard.writeText(data.temporary_password).catch(() => {});

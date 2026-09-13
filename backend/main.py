@@ -26,6 +26,7 @@ from outcomes import (
     init_outcomes_tables, record_prediction_outcome, get_horse_performance,
     get_user_performance, get_outcomes_report, get_outcomes_by_horse
 )
+from email_service import send_approval_email, send_user_created_email
 from pydantic import BaseModel
 
 # Load environment variables
@@ -377,12 +378,16 @@ async def add_user(request: UserManagement, authorization: Optional[str] = Heade
         generated_password = request.password
 
     if add_approved_user(new_email, generated_password):
+        # Send user creation email
+        email_sent = send_user_created_email(new_email, generated_password, email)
+
         return {
             "success": True,
             "message": f"User {new_email} added successfully",
             "email": new_email,
             "password": generated_password,
-            "password_generated": not request.password
+            "password_generated": not request.password,
+            "email_sent": email_sent
         }
     return {"success": False, "message": "Failed to add user", "error": "Invalid email"}
 
@@ -467,12 +472,16 @@ async def approve_pending_request(request: UserManagement, authorization: Option
     user_email = request.email.lower().strip()
     success, temp_password = approve_request(user_email)
     if success:
+        # Send approval email to user
+        email_sent = send_approval_email(user_email, temp_password)
+
         return {
             "success": True,
             "message": f"Access approved for {user_email}",
             "email": user_email,
             "temporary_password": temp_password,
-            "instructions": f"Share this temporary password with the user: {temp_password}. They should change it on first login."
+            "instructions": f"Share this temporary password with the user: {temp_password}. They should change it on first login.",
+            "email_sent": email_sent
         }
     return {"success": False, "message": "Failed to approve request", "error": "Request not found"}
 
