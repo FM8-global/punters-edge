@@ -284,8 +284,10 @@ async def get_outcomes_report_endpoint(
         end = datetime.fromisoformat(end_date) if end_date else None
 
         data = get_outcomes_report(start_date=start, end_date=end, min_score=min_score)
-        if not data:
-            raise ValueError("No data from database")
+        if not data or not data.get('outcomes'):
+            logger.warning("No outcomes data from database, using mock data")
+            from mock_data import get_mock_outcomes_report
+            return get_mock_outcomes_report()
         return data
     except Exception as e:
         logger.warning(f"Using mock outcomes report data: {e}")

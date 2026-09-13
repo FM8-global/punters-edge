@@ -161,17 +161,45 @@ def get_mock_user_performance():
 def get_mock_outcomes_report():
     """Generate mock outcomes report data"""
     return {
-        "period": "Last 30 days",
         "total_predictions": 342,
-        "winning_predictions": 124,
-        "accuracy": 36.3,
-        "roi": 11.8,
-        "total_staked": 8234.50,
-        "total_returns": 9206.75,
-        "profit": 972.25,
-        "by_confidence": {
-            "high": {"predictions": 156, "wins": 62, "accuracy": 39.7, "roi": 14.2},
-            "medium": {"predictions": 128, "wins": 42, "accuracy": 32.8, "roi": 9.5},
-            "low": {"predictions": 58, "wins": 20, "accuracy": 34.5, "roi": 8.1}
-        }
+        "wins": 124,
+        "places": 89,
+        "losses": 129,
+        "win_rate": 36.3,
+        "avg_roi": 11.8,
+        "outcomes": [
+            {
+                "race_id": "mock-race-0",
+                "track": "Ascot",
+                "race_num": "1",
+                "horse_name": "Thunder",
+                "predicted_score": 75.2,
+                "predicted_odds": 3.5,
+                "prediction_date": "2024-09-10T14:30:00",
+                "actual_result": "win",
+                "roi": 15.5
+            },
+            {
+                "race_id": "mock-race-1",
+                "track": "Cheltenham",
+                "race_num": "2",
+                "horse_name": "Midnight",
+                "predicted_score": 68.5,
+                "predicted_odds": 2.8,
+                "prediction_date": "2024-09-10T15:00:00",
+                "actual_result": "place",
+                "roi": 8.2
+            },
+            {
+                "race_id": "mock-race-2",
+                "track": "Newmarket",
+                "race_num": "3",
+                "horse_name": "Blazer",
+                "predicted_score": 82.1,
+                "predicted_odds": 4.2,
+                "prediction_date": "2024-09-10T15:30:00",
+                "actual_result": "loss",
+                "roi": -5.0
+            }
+        ]
     }
