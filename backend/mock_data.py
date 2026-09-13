@@ -10,13 +10,22 @@ def get_mock_races():
 
     base_time = datetime.utcnow()
 
+    # Realistic horse names for mock data
+    horse_names = [
+        ["Thunder", "Midnight", "Blazer", "Storm", "Eagle", "Ranger", "Phantom", "Shadow"],
+        ["Lightning", "Comet", "Flash", "Spirit", "Noble", "Rocket", "Titan", "Victory"],
+        ["Dragon", "Phoenix", "Mercury", "Jupiter", "Saturn", "Venus", "Apollo", "Neptune"],
+        ["Blaze", "Swift", "Valor", "Surge", "Apex", "Inferno", "Nova", "Zenith"],
+        ["Dynasty", "Legend", "Crown", "Empire", "Destiny", "Fortune", "Triumph", "Warrior"]
+    ]
+
     for i in range(5):
         race_time = base_time + timedelta(hours=i)
 
         runners = []
         for j in range(1, 9):
             runner = Runner(
-                name=f"Horse {j} {chr(65+i)}",
+                name=horse_names[i][j-1],
                 number=j,
                 bookmakers=[
                     BookmakerOdds(
