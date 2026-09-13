@@ -60,8 +60,24 @@ def test_approval_email():
     logger.info(f"Temporary Password: {test_password}")
 
     if not ENABLE_EMAIL:
-        logger.warning("Email service is disabled")
-        logger.info("✓ Test would send approval email (skipped - email disabled)")
+        logger.warning("Email service is disabled - PREVIEW MODE")
+        logger.info("")
+        logger.info("EMAIL PREVIEW - What would be sent:")
+        logger.info("-" * 70)
+        logger.info(f"To: {test_email}")
+        logger.info(f"Subject: Your PunterEdge Access Has Been Approved")
+        logger.info("")
+        logger.info("Body (HTML/Text):")
+        logger.info("Dear User,")
+        logger.info("")
+        logger.info("Your access to PunterEdge has been approved!")
+        logger.info("")
+        logger.info(f"Your temporary password: {test_password}")
+        logger.info("")
+        logger.info("Please log in and change your password immediately.")
+        logger.info("Access link: https://punter-edge.railway.app/login")
+        logger.info("-" * 70)
+        logger.info("✓ Test would send approval email (PREVIEW MODE)")
         return True
 
     try:
@@ -95,8 +111,26 @@ def test_user_creation_email():
     logger.info(f"Password: {test_password}")
 
     if not ENABLE_EMAIL:
-        logger.warning("Email service is disabled")
-        logger.info("✓ Test would send creation email (skipped - email disabled)")
+        logger.warning("Email service is disabled - PREVIEW MODE")
+        logger.info("")
+        logger.info("EMAIL PREVIEW - What would be sent:")
+        logger.info("-" * 70)
+        logger.info(f"To: {test_email}")
+        logger.info(f"Subject: Welcome to PunterEdge - Your Account Created")
+        logger.info("")
+        logger.info("Body (HTML/Text):")
+        logger.info("Welcome to PunterEdge!")
+        logger.info("")
+        logger.info(f"Your account has been created by {admin_email}")
+        logger.info("")
+        logger.info(f"Login credentials:")
+        logger.info(f"  Email: {test_email}")
+        logger.info(f"  Password: {test_password}")
+        logger.info("")
+        logger.info("Please change your password after first login.")
+        logger.info("Access link: https://punter-edge.railway.app/login")
+        logger.info("-" * 70)
+        logger.info("✓ Test would send creation email (PREVIEW MODE)")
         return True
 
     try:
@@ -130,8 +164,18 @@ def test_batch_email_flow():
         logger.info(f"  - {email}")
 
     if not ENABLE_EMAIL:
-        logger.warning("Email service is disabled")
-        logger.info(f"✓ Would send {len(test_users)} emails (skipped - email disabled)")
+        logger.warning("Email service is disabled - PREVIEW MODE")
+        logger.info("")
+        logger.info(f"BATCH EMAIL PREVIEW - Would send {len(test_users)} emails:")
+        logger.info("-" * 70)
+        for i, email in enumerate(test_users, 1):
+            logger.info(f"Email {i}:")
+            logger.info(f"  To: {email}")
+            logger.info(f"  Subject: Welcome to PunterEdge")
+            logger.info(f"  Message: Approval notification with access granted")
+            logger.info("")
+        logger.info("-" * 70)
+        logger.info(f"✓ Would send {len(test_users)} emails (PREVIEW MODE)")
         return True
 
     success_count = 0
