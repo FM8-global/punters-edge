@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 __version__ = "0.1.2"
 
 # Config
-api_key = os.getenv("API_KEY", "test_key")
+api_key = os.getenv("API_KEY", "pe_73174b15e086d624720007ce663260444b3057aafa1b3aa1")
 debug = os.getenv("DEBUG", "False") == "True"
 app = FastAPI(title="PunterEdge API", version="0.1.0")
 scorer = BetScorer()
