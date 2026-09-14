@@ -216,4 +216,17 @@ def _get_status_text(status_code):
 
 
 # Create the WSGI application
-application = ASGItoWSGI(app)
+_asgi_app = ASGItoWSGI(app)
+
+
+# DEBUG ENDPOINT: Direct WSGI endpoint for quick deployment verification
+# This bypasses the FastAPI app to verify the WSGI reloader is working
+def application(environ, start_response):
+    """WSGI application entry point with debug endpoint."""
+    if environ.get("PATH_INFO") == "/wsgi-debug":
+        status = "200 OK"
+        response_headers = [("Content-Type", "application/json")]
+        start_response(status, response_headers)
+        return [b'{"status":"wsgi-reloaded","timestamp":"2026-09-14T14:35:00Z"}']
+    # Delegate to FastAPI application
+    return _asgi_app(environ, start_response)
