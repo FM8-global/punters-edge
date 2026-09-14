@@ -262,10 +262,11 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
     data = get_horse_performance()
     # Normalize field names for frontend compatibility
     normalized = []
-    for horse in (data if data else []):
+    for idx, horse in enumerate(data if data else [], 1):
         if isinstance(horse, dict):
+            horse_name = horse.get("horse_name") or horse.get("horse") or f"Horse {idx}"
             normalized.append({
-                "horse_name": horse.get("horse_name") or horse.get("horse") or "Unknown",
+                "horse_name": horse_name,
                 "total_predictions": horse.get("total_predictions", "-"),
                 "wins": horse.get("wins", 0),
                 "places": horse.get("places", 0),

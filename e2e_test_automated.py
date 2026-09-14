@@ -44,16 +44,16 @@ class E2ETestRunner:
         try:
             self.driver = webdriver.Chrome(options=chrome_options)
             self.driver.implicitly_wait(10)
-            print(f"✓ WebDriver initialized (headless={self.headless})")
+            print(f"[OK] WebDriver initialized (headless={self.headless})")
         except Exception as e:
-            print(f"✗ Failed to initialize WebDriver: {e}")
+            print(f"[FAIL] Failed to initialize WebDriver: {e}")
             raise
 
     def teardown(self):
         """Close the WebDriver."""
         if self.driver:
             self.driver.quit()
-            print("✓ WebDriver closed")
+            print("[OK] WebDriver closed")
 
     def log_result(self, test_name, status, message=""):
         """Log test result."""
@@ -63,7 +63,7 @@ class E2ETestRunner:
             "message": message,
             "timestamp": datetime.now().isoformat()
         })
-        symbol = "✓" if status == "PASS" else "✗"
+        symbol = "[+]" if status == "PASS" else "[-]"
         print(f"{symbol} {test_name}: {status} {message}")
 
     def navigate_to(self, path="/"):
@@ -395,7 +395,7 @@ class E2ETestRunner:
             self.test_login_invalid_credentials()
 
         except Exception as e:
-            print(f"✗ Test suite error: {e}")
+            print(f"[FAIL] Test suite error: {e}")
         finally:
             self.teardown()
 
@@ -414,15 +414,15 @@ class E2ETestRunner:
         total = len(self.test_results)
 
         print(f"\nTotal Tests: {total}")
-        print(f"✓ Passed: {passed}")
-        print(f"✗ Failed: {failed}")
+        print(f"[+] Passed: {passed}")
+        print(f"[-] Failed: {failed}")
         print(f"Pass Rate: {(passed/total*100):.1f}%")
 
         if failed > 0:
             print("\nFailed Tests:")
             for result in self.test_results:
                 if result['status'] == 'FAIL':
-                    print(f"  ✗ {result['test']}: {result['message']}")
+                    print(f"  [-] {result['test']}: {result['message']}")
 
         print("\n" + "="*60)
 
