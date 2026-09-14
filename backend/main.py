@@ -800,6 +800,36 @@ async def get_manual(manual_name: str):
         raise HTTPException(status_code=500, detail="Error loading manual")
 
 
+# Dynamic predictions page (bypasses static file caching)
+@app.get("/predictions", response_class=HTMLResponse)
+async def predictions_page(authorization: Optional[str] = Header(None)):
+    """Serve predictions page with real race data"""
+    # Extract token from Authorization header
+    token = None
+    if authorization:
+        parts = authorization.split()
+        if len(parts) == 2 and parts[0].lower() == "bearer":
+            token = parts[1]
+
+    # Serve the predictions HTML
+    predictions_file = STATIC_DIR / "predictions.html"
+    if predictions_file.exists():
+        with open(predictions_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    return "<h1>Predictions</h1><p>Page not found</p>"
+
+
+# Dynamic outcomes page (bypasses static file caching)
+@app.get("/outcomes", response_class=HTMLResponse)
+async def outcomes_page(authorization: Optional[str] = Header(None)):
+    """Serve outcomes analytics page"""
+    outcomes_file = STATIC_DIR / "outcomes.html"
+    if outcomes_file.exists():
+        with open(outcomes_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    return "<h1>Outcomes</h1><p>Page not found</p>"
+
+
 # Favicon route
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
