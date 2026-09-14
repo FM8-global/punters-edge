@@ -36,7 +36,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Force bytecode recompilation on PythonAnywhere
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 # Config
 api_key = os.getenv("API_KEY", "pe_73174b15e086d624720007ce663260444b3057aafa1b3aa1")
@@ -865,4 +865,4 @@ async def login_page():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-# Cache bust: 1789109875
+# Cache bust: 1789110275
