@@ -138,17 +138,20 @@ async def debug_api_status():
         return {
             "status": "ok",
             "api_key_configured": bool(api_key and len(api_key) > 5),
+            "api_key_length": len(api_key) if api_key else 0,
             "using_mock_data": using_mock,
+            "api_error": client.last_error,
             "races_count": len(races_data),
             "first_runner_name": first_runner_name,
-            "data_source": "MOCK DATA" if using_mock else "REAL API",
+            "data_source": "MOCK DATA (API failed)" if using_mock else "REAL API",
             "api_base_url": client.BASE_URL
         }
     except Exception as e:
         return {
             "status": "error",
             "error": str(e),
-            "api_key_configured": bool(api_key and len(api_key) > 5)
+            "api_key_configured": bool(api_key and len(api_key) > 5),
+            "api_key_length": len(api_key) if api_key else 0
         }
 
 
@@ -566,32 +569,42 @@ async def get_bets(min_score: float = 50.0, authorization: Optional[str] = Heade
     try:
         races_data = await client.get_racing_next_to_go()
 
-        # Check if races are empty and trigger mock fallback
-        if not races_data:
-            logger.info("No races returned from API, using mock predictions")
+        # Check if using mock data (API failure or empty result)
+        if client.use_mock_data:
+            logger.warning(f"API fallback to mock data triggered for user {email}")
             from mock_data import get_mock_predictions
             all_predictions = get_mock_predictions()
             filtered = [p for p in all_predictions if p.score >= min_score]
             return sorted(filtered, key=lambda x: x.score, reverse=True)
 
-        races = [Race(**race) for race in races_data]
+        # Check if races are empty (shouldn't happen if use_mock_data is False)
+        if not races_data:
+            logger.error(f"No races returned from API but use_mock_data is False")
+            raise ValueError("API returned no races")
 
+        # Parse races and generate predictions
+        races = [Race(**race) for race in races_data]
         all_predictions = []
+
         for race in races:
             predictions = scorer.score_race(race)
             all_predictions.extend(predictions)
 
-        # If no predictions generated, use mock data
+        # If no predictions generated from real data, that's expected behavior
         if not all_predictions:
-            logger.info("No predictions generated, using mock predictions")
-            from mock_data import get_mock_predictions
-            all_predictions = get_mock_predictions()
+            logger.info(f"No predictions generated from {len(races)} races (may be due to overlay threshold)")
+            return []
 
         filtered = [p for p in all_predictions if p.score >= min_score]
+        logger.info(f"Returned {len(filtered)} predictions for user {email} from real API data")
         return sorted(filtered, key=lambda x: x.score, reverse=True)
 
     except Exception as e:
-        logger.warning(f"Error scoring races: {e}. Falling back to mock predictions.")
+        logger.error(f"Critical error in /bets endpoint: {type(e).__name__}: {e}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        # Only fall back to mock data if absolutely necessary
+        logger.warning(f"Falling back to mock predictions due to error")
         from mock_data import get_mock_predictions
         all_predictions = get_mock_predictions()
         filtered = [p for p in all_predictions if p.score >= min_score]

@@ -15,6 +15,7 @@ class PuntersEdgeClient:
         self.headers = {"X-API-Key": api_key}
         self.timeout = 15
         self.use_mock_data = False
+        self.last_error = None
 
     async def get_racing_next_to_go(self) -> list:
         """Get upcoming races with live odds - returns list of races"""
@@ -42,10 +43,12 @@ class PuntersEdgeClient:
                 logger.info(f"Returning real API data with {len(races)} races")
                 return races
             except Exception as e:
-                logger.error(f"PuntersEdge API error: {type(e).__name__}: {e}")
+                error_msg = f"{type(e).__name__}: {e}"
+                logger.error(f"PuntersEdge API error: {error_msg}")
                 import traceback
                 logger.error(f"Traceback: {traceback.format_exc()}")
                 self.use_mock_data = True
+                self.last_error = error_msg
                 # Fallback to mock data
                 from mock_data import get_mock_races
                 races = get_mock_races()
