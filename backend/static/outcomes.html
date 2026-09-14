@@ -391,13 +391,13 @@
                 let html = '<table><thead><tr><th>Horse</th><th>Predictions</th><th>Wins</th><th>Places</th><th>Losses</th><th>Win Rate %</th><th>Avg ROI %</th></tr></thead><tbody>';
 
                 horses.forEach((horse, idx) => {
-                    // Handle both old (horse, roi) and new (horse_name, avg_roi) API formats
-                    let name = String(horse.horse_name || horse.horse || '').trim();
+                    // Handle API response format with horse/roi or horse_name/avg_roi
+                    let name = String(horse.horse || horse.horse_name || '').trim();
                     if (!name || name === 'undefined' || name === 'null') {
                         name = `Horse ${idx + 1}`;
                     }
                     const total = String(horse.total_predictions !== undefined ? horse.total_predictions : (horse.predictions_count || '-'));
-                    const roi = Number(horse.avg_roi !== undefined ? horse.avg_roi : (horse.roi || 0));
+                    const roi = Number(horse.roi !== undefined ? horse.roi : (horse.avg_roi || 0));
                     const roiClass = roi >= 0 ? 'positive-roi' : 'negative-roi';
                     html += `<tr onclick="showHorseDetails('${name}')" style="cursor:pointer;">
                         <td><strong>${name}</strong></td>
