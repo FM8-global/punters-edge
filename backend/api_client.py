@@ -34,12 +34,8 @@ class PuntersEdgeClient:
                 # Log and check for data
                 logger.info(f"PuntersEdge API returned {len(races)} races")
                 if not races:
-                    logger.warning("API returned empty races list, falling back to mock data")
-                    self.use_mock_data = True
-                    from mock_data import get_mock_races
-                    races = get_mock_races()
-                    logger.info(f"Using mock data with {len(races)} mock races")
-                    return [r.dict() if hasattr(r, 'dict') else r for r in races]
+                    logger.warning("API returned empty races list")
+                    return []
                 logger.info(f"Returning real API data with {len(races)} races")
                 return races
             except Exception as e:
@@ -47,14 +43,10 @@ class PuntersEdgeClient:
                 logger.error(f"PuntersEdge API error: {error_msg}")
                 import traceback
                 logger.error(f"Traceback: {traceback.format_exc()}")
-                self.use_mock_data = True
                 self.last_error = error_msg
-                # Fallback to mock data
-                from mock_data import get_mock_races
-                races = get_mock_races()
-                logger.info(f"Exception handler: Using mock data with {len(races)} mock races")
-                # Convert Race objects to dict format
-                return [r.dict() if hasattr(r, 'dict') else r for r in races]
+                # Return empty list instead of mock data
+                logger.warning("Returning empty list due to API error")
+                return []
 
     async def get_best_odds(self, sport: str = "racing") -> dict:
         """Get best odds across all bookmakers by sport"""
