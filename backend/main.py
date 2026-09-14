@@ -576,18 +576,15 @@ async def get_bets(min_score: float = 50.0, authorization: Optional[str] = Heade
     try:
         races_data = await client.get_racing_next_to_go()
 
-        # Check if using mock data (API failure or empty result)
-        if client.use_mock_data:
-            logger.warning(f"API fallback to mock data triggered for user {email}")
+        # Check if races are empty and use mock data only as last resort
+        if not races_data:
+            logger.warning(f"No races from API, falling back to mock data for user {email}")
             from mock_data import get_mock_predictions
             all_predictions = get_mock_predictions()
             filtered = [p for p in all_predictions if p.score >= min_score]
             return sorted(filtered, key=lambda x: x.score, reverse=True)
 
-        # Check if races are empty (shouldn't happen if use_mock_data is False)
-        if not races_data:
-            logger.error(f"No races returned from API but use_mock_data is False")
-            raise ValueError("API returned no races")
+        logger.info(f"Using real API data: {len(races_data)} races available for user {email}")
 
         # Parse races and generate predictions
         races = [Race(**race) for race in races_data]
