@@ -811,6 +811,22 @@ async def predictions_page(authorization: Optional[str] = Header(None)):
     return "<h1>Predictions</h1><p>Page not found</p>"
 
 
+# Reload endpoint - triggers app restart
+@app.post("/admin/restart")
+async def restart_app():
+    """Trigger app restart (development only)"""
+    import subprocess
+    import os
+    try:
+        logger.warning("App restart requested via /admin/restart endpoint")
+        # This will cause PythonAnywhere to restart the app
+        os.system("touch /var/www/FM8Global_pythonanywhere_com_wsgi.py")
+        return {"status": "restarting", "message": "WSGI file touched to trigger reload"}
+    except Exception as e:
+        logger.error(f"Restart failed: {e}")
+        return {"status": "error", "message": str(e)}
+
+
 # Dynamic outcomes page (bypasses static file caching)
 @app.get("/outcomes", response_class=HTMLResponse)
 async def outcomes_page(authorization: Optional[str] = Header(None)):
