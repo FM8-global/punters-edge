@@ -264,7 +264,10 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
     normalized = []
     for idx, horse in enumerate(data if data else [], 1):
         if isinstance(horse, dict):
-            horse_name = horse.get("horse_name") or horse.get("horse") or f"Horse {idx}"
+            # Prioritize 'horse' field from API, fallback to 'horse_name'
+            horse_name = horse.get("horse") or horse.get("horse_name") or f"Horse {idx}"
+            # Prioritize 'roi' field from API, fallback to 'avg_roi'
+            avg_roi = horse.get("roi") or horse.get("avg_roi", 0)
             normalized.append({
                 "horse_name": horse_name,
                 "total_predictions": horse.get("total_predictions", "-"),
@@ -272,7 +275,7 @@ async def get_horse_perf(authorization: Optional[str] = Header(None)):
                 "places": horse.get("places", 0),
                 "losses": horse.get("losses", 0),
                 "win_rate": horse.get("win_rate", 0),
-                "avg_roi": horse.get("avg_roi") or horse.get("roi", 0)
+                "avg_roi": avg_roi
             })
     return {"horses": normalized}
 
