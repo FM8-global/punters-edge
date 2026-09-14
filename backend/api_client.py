@@ -20,6 +20,8 @@ class PuntersEdgeClient:
         """Get upcoming races with live odds - returns list of races"""
         async with httpx.AsyncClient() as client:
             try:
+                logger.info(f"Fetching races from {self.BASE_URL}/racing/next-to-go")
+                logger.info(f"API Key set: {'Yes' if self.api_key else 'NO - EMPTY!'}")
                 response = await client.get(
                     f"{self.BASE_URL}/racing/next-to-go",
                     headers=self.headers,
@@ -31,18 +33,23 @@ class PuntersEdgeClient:
                 # Log and check for data
                 logger.info(f"PuntersEdge API returned {len(races)} races")
                 if not races:
-                    logger.info("API returned empty races, using mock data")
+                    logger.warning("API returned empty races list, falling back to mock data")
                     self.use_mock_data = True
                     from mock_data import get_mock_races
                     races = get_mock_races()
+                    logger.info(f"Using mock data with {len(races)} mock races")
                     return [r.dict() if hasattr(r, 'dict') else r for r in races]
+                logger.info(f"Returning real API data with {len(races)} races")
                 return races
             except Exception as e:
-                logger.warning(f"PuntersEdge API error: {e}. Falling back to mock data.")
+                logger.error(f"PuntersEdge API error: {type(e).__name__}: {e}")
+                import traceback
+                logger.error(f"Traceback: {traceback.format_exc()}")
                 self.use_mock_data = True
                 # Fallback to mock data
                 from mock_data import get_mock_races
                 races = get_mock_races()
+                logger.info(f"Exception handler: Using mock data with {len(races)} mock races")
                 # Convert Race objects to dict format
                 return [r.dict() if hasattr(r, 'dict') else r for r in races]
 

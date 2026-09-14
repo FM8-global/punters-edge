@@ -121,6 +121,37 @@ async def health_check():
     return {"status": "ok"}
 
 
+@app.get("/debug/api-status")
+async def debug_api_status():
+    """Debug endpoint to check API configuration and data source"""
+    try:
+        races_data = await client.get_racing_next_to_go()
+        using_mock = client.use_mock_data
+
+        # Check first runner to see if it's real or mock data
+        first_runner_name = None
+        if races_data and len(races_data) > 0:
+            first_race = races_data[0]
+            if 'runners' in first_race and len(first_race['runners']) > 0:
+                first_runner_name = first_race['runners'][0].get('name', 'unknown')
+
+        return {
+            "status": "ok",
+            "api_key_configured": bool(api_key and len(api_key) > 5),
+            "using_mock_data": using_mock,
+            "races_count": len(races_data),
+            "first_runner_name": first_runner_name,
+            "data_source": "MOCK DATA" if using_mock else "REAL API",
+            "api_base_url": client.BASE_URL
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "api_key_configured": bool(api_key and len(api_key) > 5)
+        }
+
+
 # AUTH ENDPOINTS
 
 @app.post("/login", response_model=LoginResponse)
