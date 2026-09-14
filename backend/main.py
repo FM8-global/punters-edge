@@ -359,6 +359,9 @@ async def record_outcome(
     if not is_admin(email):
         raise HTTPException(status_code=403, detail="Admin access required")
 
+    if not horse_name or not horse_name.strip():
+        raise HTTPException(status_code=400, detail="horse_name is required and cannot be empty")
+
     from datetime import datetime
     if record_prediction_outcome(
         race_id=race_id,

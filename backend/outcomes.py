@@ -61,7 +61,7 @@ def init_outcomes_tables():
         # Performance summary by horse
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS horse_performance (
-                horse_name VARCHAR(255) PRIMARY KEY,
+                horse_name VARCHAR(255) PRIMARY KEY NOT NULL,
                 total_predictions INTEGER DEFAULT 0,
                 wins INTEGER DEFAULT 0,
                 places INTEGER DEFAULT 0,
@@ -118,6 +118,10 @@ def record_prediction_outcome(
     race_num: str = None
 ) -> bool:
     """Record prediction outcome after race is complete"""
+    if not horse_name or not isinstance(horse_name, str) or not horse_name.strip():
+        logger.error(f"Cannot record outcome: horse_name is required and cannot be empty. Got: {horse_name}")
+        return False
+
     try:
         conn = get_db_connection()
         if not conn:
@@ -158,8 +162,8 @@ def update_performance_summary(horse_name: str, email: str = None, result: str =
             return
         cursor = conn.cursor()
 
-        # Update horse performance
-        if horse_name:
+        # Update horse performance (ensure horse_name is valid)
+        if horse_name and isinstance(horse_name, str) and horse_name.strip():
             cursor.execute("""
                 INSERT INTO horse_performance (horse_name, total_predictions)
                 VALUES (%s, 1)
