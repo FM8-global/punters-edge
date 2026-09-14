@@ -11,7 +11,7 @@ Issue solved:
 - FastAPI is ASGI
 - We need a reliable ASGI-to-WSGI adapter that properly handles JSON bodies
 
-RELOAD_MARKER: 2026-09-11-16:30:00
+RELOAD_MARKER: 2026-09-14-14:30:00
 """
 
 import asyncio
